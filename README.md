@@ -1,150 +1,97 @@
 # Sigenerate
 
-A Flutter desktop app for designing:
+<div align="center">
 
-- metro / rail transit guide signs
-- road route shields and direction signs
+<img src="https://img.shields.io/github/stars/Cydiacoft/Sigenerate?style=flat&color=ff69b4" alt="stars">
+<img src="https://img.shields.io/github/forks/Cydiacoft/Sigenerate?style=flat&color=orange" alt="forks">
+<img src="https://img.shields.io/github/license/Cydiacoft/Sigenerate" alt="license">
+<img src="https://img.shields.io/badge/platform-Windows-green" alt="platform">
 
-The project currently targets **Windows desktop** and focuses on fast visual editing with live preview.
+**轨道交通导向牌与道路标志生成工具**
 
-## Features
+</div>
 
-### Metro guide signs
+---
 
-- Multiple city styles:
-  - Shanghai Metro
-  - Guangzhou Metro
-  - Hong Kong MTR
-- Preset metro templates for station name, direction, exit, transfer, and line information
-- A metro guide composition mode refactored with reference to [`mercutiojohn/vi-tool`](https://github.com/mercutiojohn/vi-tool)
-- Real SVG-based icon elements for:
-  - `line`
-  - `way`
-  - `stn`
-  - `oth`
-  - `sub`
-  - `cls`
-  - `clss`
-- Horizontal sign composition canvas with:
-  - drag-to-insert
-  - long-press reorder
-  - right-click edit / duplicate / delete
-  - undo / redo history
+## 功能
 
-### Road signs
+- 轨道交通模板编辑
+- 轨道交通导向牌拼接
+- 道路标志模板编辑
+- 支持项目保存 / 打开
+- 支持上海地铁、广州地铁、港铁风格
+- 轨交素材库接入真实 SVG 元素
 
-- Road sign editing based on `GB 5768.2-2022`
-- Multiple route shield / direction sign templates
-- Live template preview and parameter editing
+---
 
-## Tech Stack
+## 轨交导向牌
 
-- Flutter
-- Dart
-- Windows desktop
-- `flutter_svg`
+- 参考 [`vi-tool`](https://github.com/mercutiojohn/vi-tool) 重构
+- 支持素材拖拽插入
+- 支持横向拼接导向牌
+- 支持长按重排
+- 支持右键复制 / 删除 / 编辑
+- 支持撤销 / 重做
 
-## Project Structure
+---
 
-```text
-lib/
-├── main.dart
-├── models/
-│   ├── metro_models.dart
-│   ├── metro_guide_models.dart
-│   ├── templates.dart
-│   └── traffic_sign.dart
-├── pages/
-│   ├── metro_editor_page.dart
-│   ├── metro_guide_editor_page.dart
-│   ├── road_editor_page.dart
-│   └── combined_editor_page.dart
-├── painters/
-│   ├── metro_painter.dart
-│   ├── template_painter.dart
-│   └── road_sign_painter.dart
-├── utils/
-│   ├── export_utils.dart
-│   ├── metro_guide_spacing.dart
-│   └── metro_guide_svg_utils.dart
-└── widgets/
-    ├── metro_guide_canvas.dart
-    ├── metro_guide_item.dart
-    ├── metro_guide_toolbar.dart
-    └── metro_guide_toolbar_item.dart
+## 运行
 
-assets/
-└── metro_guide/
-```
-
-## Getting Started
-
-### Requirements
+### 环境
 
 - Flutter SDK 3.x
 - Windows 10/11
 
-### Install dependencies
+### 安装依赖
 
 ```bash
 flutter pub get
 ```
 
-### Run
+### 调试运行
 
 ```bash
 flutter run -d windows
 ```
 
-### Build
+### 构建 Windows
 
 ```bash
 flutter build windows --release
 ```
 
-Build output:
+构建产物目录：
 
 ```text
 build/windows/x64/runner/Release/
 ```
 
-## Metro Guide Refactor Notes
+---
 
-The metro guide composition part was refactored to align more closely with the behavior and element system of [`vi-tool`](https://github.com/mercutiojohn/vi-tool):
+## 项目结构
 
-- imported real SVG guide elements into `assets/metro_guide/`
-- replaced placeholder Material icons with SVG rendering
-- implemented `vi-tool`-style spacing rules between adjacent guide elements
-- added runtime color replacement for color-band based SVG assets
-- wired the metro editor's "素材库" tab to the new horizontal composition canvas
+```text
+lib/
+├── main.dart
+├── models/
+├── pages/
+├── painters/
+├── utils/
+└── widgets/
 
-## Current Status
+assets/
+└── metro_guide/
+```
 
-Implemented:
+---
 
-- metro template editing
-- metro guide composition mode
-- road sign template editing
-- project save/open flow
-- SVG-based metro guide element rendering
+## 说明
 
-Still incomplete or worth improving:
+- 轨交素材资源参考：[`mercutiojohn/vi-tool`](https://github.com/mercutiojohn/vi-tool)
+- 道路标志参考标准：`GB 5768.2-2022`
 
-- PNG export flow needs more end-to-end validation
-- some metro interactions can be aligned even further with `vi-tool`
-- README screenshots are not added yet
+---
 
-## Asset and License Notes
+## License
 
-Code in this repository is under the project license.
-
-However, some metro guide SVG assets were imported with reference to the `vi-tool` project. Please review the original repository and its asset/license notes before redistributing those resources commercially or separately from this project:
-
-- [`mercutiojohn/vi-tool`](https://github.com/mercutiojohn/vi-tool)
-
-## References
-
-- [Flutter Desktop Docs](https://docs.flutter.dev/desktop)
-- [vi-tool](https://github.com/mercutiojohn/vi-tool)
-- [railmapgen.org](https://railmapgen.org)
-- [GB 5768.2-2022](https://www.gov.cn/)
+MIT License
