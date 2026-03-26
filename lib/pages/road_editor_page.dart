@@ -1,10 +1,12 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:io';
-import '../models/templates.dart';
-import '../painters/template_painter.dart';
+
+import '../models/intersection_scene.dart';
+import '../models/traffic_sign.dart';
+import '../painters/road_sign_painter.dart';
+import '../painters/traffic_sign_painter.dart';
+import '../signs/gb5768_signs.dart';
 import '../theme/app_theme.dart';
+import '../utils/export_utils.dart';
 
 class RoadEditorPage extends StatefulWidget {
   const RoadEditorPage({super.key});
@@ -14,160 +16,564 @@ class RoadEditorPage extends StatefulWidget {
 }
 
 class _RoadEditorPageState extends State<RoadEditorPage> {
-  String? _currentFilePath;
-  String _projectName = '新项目';
-  bool _hasUnsavedChanges = false;
+  final GlobalKey _northKey = GlobalKey();
+  final GlobalKey _eastKey = GlobalKey();
+  final GlobalKey _southKey = GlobalKey();
+  final GlobalKey _westKey = GlobalKey();
 
-  TemplateLayout? _selectedTemplate;
-  Map<String, String> _slotValues = {};
-  String? _selectedSlotId;
-  Color _backgroundColor = const Color(0xFF059669);
+  IntersectionScene _scene = IntersectionScene(
+    name: '学院路与滨江大道交叉口',
+    north: DirectionInfo(
+      roadName: '学院路',
+      destination: '高铁站',
+      signIds: ['pro-stop', 'warn-pedestrian', 'ind-hospital'],
+    ),
+    east: DirectionInfo(
+      roadName: '滨江大道',
+      roadType: RoadType.highway,
+      destination: '高速入口',
+      destinationType: DestinationType.highway,
+      signIds: ['man-straight', 'info-expressway'],
+    ),
+    south: DirectionInfo(
+      roadName: '学院路',
+      destination: '老城中心',
+      signIds: ['pro-no-parking', 'warn-children'],
+    ),
+    west: DirectionInfo(
+      roadName: '滨江大道',
+      roadType: RoadType.scenic,
+      destination: '湿地公园',
+      destinationType: DestinationType.scenic,
+      signIds: ['warn-crossroad', 'info-tourist'],
+    ),
+  );
+
+  String _activeDirection = 'north';
+  SignCategory _activeCategory = SignCategory.prohibition;
+
+  late final TextEditingController _nameController;
+  final Map<String, TextEditingController> _roadControllers = {};
+  final Map<String, TextEditingController> _destinationControllers = {};
 
   @override
   void initState() {
     super.initState();
-    _selectedTemplate = TemplatePresets.all.first;
-    _initSlotValues();
+    _nameController = TextEditingController(text: _scene.name);
+    for (final entry in _scene.directions.entries) {
+      _roadControllers[entry.key] = TextEditingController(
+        text: entry.value.roadName,
+      );
+      _destinationControllers[entry.key] = TextEditingController(
+        text: entry.value.destination,
+      );
+    }
   }
 
-  void _initSlotValues() {
-    _slotValues = {};
-    for (final slot in _selectedTemplate?.slots ?? []) {
-      _slotValues[slot.id] = '';
+  @override
+  void dispose() {
+    _nameController.dispose();
+    for (final controller in _roadControllers.values) {
+      controller.dispose();
     }
+    for (final controller in _destinationControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
+      backgroundColor: const Color(0xFF0B1120),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildToolbar(context),
+            Expanded(
+              child: Row(
+                children: [
+                  _buildConfigPanel(),
+                  Expanded(child: _buildPreviewArea()),
+                  _buildLibraryPanel(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToolbar(BuildContext context) {
+    return Container(
+      height: 72,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: const BoxDecoration(
+        color: Color(0xFF111827),
+        border: Border(bottom: BorderSide(color: Color(0xFF1F2937))),
+      ),
+      child: Row(
         children: [
-          _buildLeftPanel(),
-          Expanded(child: _buildMainArea()),
-          _buildRightPanel(),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back, color: Colors.white70),
+            tooltip: '返回',
+          ),
+          const SizedBox(width: 8),
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '道路编辑器',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                '参考 lupai 交互重构，路标元素按 GB 5768.2-2022 分类',
+                style: TextStyle(color: Colors.white60, fontSize: 12),
+              ),
+            ],
+          ),
+          const Spacer(),
+          FilledButton.icon(
+            onPressed: _exportAllSigns,
+            icon: const Icon(Icons.download),
+            label: const Text('导出全部 PNG'),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLeftPanel() {
+  Widget _buildConfigPanel() {
+    final info = _scene.directionInfo(_activeDirection);
     return Container(
-      width: 260,
-      color: AppTheme.darkBgSecondary,
+      width: 360,
+      decoration: const BoxDecoration(
+        color: Color(0xFF111827),
+        border: Border(right: BorderSide(color: Color(0xFF1F2937))),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle('基础设置', '按参考页改成路口配置驱动，而不是旧模板编辑。'),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _nameController,
+              decoration: _inputDecoration('路口名称', '例如：学院路与滨江大道交叉口'),
+              onChanged: (value) {
+                setState(() {
+                  _scene = _scene.copyWith(name: value);
+                });
+              },
+            ),
+            const SizedBox(height: 14),
+            DropdownButtonFormField<IntersectionShape>(
+              initialValue: _scene.intersectionShape,
+              decoration: _inputDecoration('路口形状', ''),
+              dropdownColor: const Color(0xFF0F172A),
+              items: IntersectionShape.values.map((shape) {
+                return DropdownMenuItem(
+                  value: shape,
+                  child: Text(_shapeLabel(shape)),
+                );
+              }).toList(),
+              onChanged: (shape) {
+                if (shape == null) {
+                  return;
+                }
+                setState(() {
+                  _scene = _scene.copyWith(intersectionShape: shape);
+                });
+              },
+            ),
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilterChip(
+                  label: const Text('中文方向词'),
+                  selected: _scene.useChineseDirection,
+                  onSelected: (selected) {
+                    setState(() {
+                      _scene = _scene.copyWith(useChineseDirection: selected);
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: const Text('英文方向词'),
+                  selected: _scene.useEnglishDirection,
+                  onSelected: (selected) {
+                    setState(() {
+                      _scene = _scene.copyWith(useEnglishDirection: selected);
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            _buildSectionTitle('方向配置', '和参考页一致，按四个方向分别录入道路与通往地点。'),
+            const SizedBox(height: 14),
+            SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(value: 'north', label: Text('北')),
+                ButtonSegment(value: 'east', label: Text('东')),
+                ButtonSegment(value: 'south', label: Text('南')),
+                ButtonSegment(value: 'west', label: Text('西')),
+              ],
+              selected: {_activeDirection},
+              onSelectionChanged: (selection) {
+                setState(() {
+                  _activeDirection = selection.first;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _roadControllers[_activeDirection],
+              decoration: _inputDecoration('道路名称', '例如：学院路'),
+              onChanged: (value) => _updateDirection(
+                _activeDirection,
+                info.copyWith(roadName: value),
+              ),
+            ),
+            const SizedBox(height: 14),
+            DropdownButtonFormField<RoadType>(
+              key: ValueKey('roadType-$_activeDirection-${info.roadType.name}'),
+              initialValue: info.roadType,
+              decoration: _inputDecoration('道路类型', ''),
+              dropdownColor: const Color(0xFF0F172A),
+              items: RoadType.values.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: Text(_roadTypeLabel(type)),
+                );
+              }).toList(),
+              onChanged: (type) {
+                if (type == null) {
+                  return;
+                }
+                _updateDirection(
+                  _activeDirection,
+                  info.copyWith(roadType: type),
+                );
+              },
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _destinationControllers[_activeDirection],
+              decoration: _inputDecoration('通往地点', '例如：高铁站 / 高速入口 / 湿地公园'),
+              onChanged: (value) => _updateDirection(
+                _activeDirection,
+                info.copyWith(destination: value),
+              ),
+            ),
+            const SizedBox(height: 14),
+            DropdownButtonFormField<DestinationType>(
+              key: ValueKey(
+                'destinationType-$_activeDirection-${info.destinationType.name}',
+              ),
+              initialValue: info.destinationType,
+              decoration: _inputDecoration('地点类型', ''),
+              dropdownColor: const Color(0xFF0F172A),
+              items: DestinationType.values.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: Text(_destinationTypeLabel(type)),
+                );
+              }).toList(),
+              onChanged: (type) {
+                if (type == null) {
+                  return;
+                }
+                _updateDirection(
+                  _activeDirection,
+                  info.copyWith(destinationType: type),
+                );
+              },
+            ),
+            const SizedBox(height: 28),
+            _buildSectionTitle('配色约束', '普通道路蓝底白字，高速绿底白字，景区棕底白字。'),
+            const SizedBox(height: 12),
+            _buildColorHint('普通道路', _scene.backgroundColor),
+            _buildColorHint('高速道路', _scene.highwayColor),
+            _buildColorHint('景区道路', _scene.scenicColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreviewArea() {
+    return Container(
+      color: const Color(0xFF0B1120),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSceneCard(),
+            const SizedBox(height: 20),
+            _buildPreviewGrid(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSceneCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF111827),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF1F2937)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(12),
-            child: Text(
-              '选择模板',
-              style: TextStyle(
-                fontSize: 11,
-                color: AppTheme.textSecondaryDark,
-                fontWeight: FontWeight.w500,
-              ),
+          const Text(
+            '路口总览',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
           ),
+          const SizedBox(height: 6),
+          Text(
+            _scene.name.isEmpty ? '未命名路口' : _scene.name,
+            style: const TextStyle(color: Colors.white60, fontSize: 13),
+          ),
+          const SizedBox(height: 18),
+          AspectRatio(
+            aspectRatio: 2.3,
+            child: CustomPaint(
+              painter: IntersectionOverviewPainter(scene: _scene),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreviewGrid() {
+    final cards = [
+      ('north', '北向', _northKey),
+      ('east', '东向', _eastKey),
+      ('south', '南向', _southKey),
+      ('west', '西向', _westKey),
+    ];
+
+    return Wrap(
+      spacing: 20,
+      runSpacing: 20,
+      children: cards.map((card) {
+        return _buildDirectionPreviewCard(card.$1, card.$2, card.$3);
+      }).toList(),
+    );
+  }
+
+  Widget _buildDirectionPreviewCard(
+    String direction,
+    String label,
+    GlobalKey key,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _activeDirection = direction;
+        });
+      },
+      child: Container(
+        width: 340,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF111827),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _activeDirection == direction
+                ? AppTheme.primaryColor
+                : const Color(0xFF1F2937),
+            width: _activeDirection == direction ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${_scene.directionInfo(direction).signIds.length} 个路标元素',
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            RepaintBoundary(
+              key: key,
+              child: AspectRatio(
+                aspectRatio: 0.85,
+                child: CustomPaint(
+                  painter: RoadSignPainter(scene: _scene, direction: direction),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLibraryPanel() {
+    final activeInfo = _scene.directionInfo(_activeDirection);
+    final categorySigns =
+        Gb5768Signs.groupedByCategory[_activeCategory] ?? const [];
+
+    return Container(
+      width: 360,
+      decoration: const BoxDecoration(
+        color: Color(0xFF111827),
+        border: Border(left: BorderSide(color: Color(0xFF1F2937))),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '路标元素库',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '当前挂接方向：${_directionName(_activeDirection)}',
+                  style: const TextStyle(color: Colors.white60, fontSize: 13),
+                ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: SignCategory.values.map((category) {
+                    return ChoiceChip(
+                      label: Text(_categoryLabel(category)),
+                      selected: _activeCategory == category,
+                      onSelected: (_) {
+                        setState(() {
+                          _activeCategory = category;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          if (activeInfo.signIds.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: activeInfo.signIds.map((id) {
+                  final sign = Gb5768Signs.findById(id);
+                  if (sign == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return InputChip(
+                    label: Text(sign.name),
+                    onDeleted: () => _toggleSign(id),
+                  );
+                }).toList(),
+              ),
+            ),
+          const SizedBox(height: 12),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: TemplatePresets.all.length,
+            child: GridView.builder(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 0.88,
+              ),
+              itemCount: categorySigns.length,
               itemBuilder: (context, index) {
-                final template = TemplatePresets.all[index];
-                final isSelected = _selectedTemplate?.name == template.name;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedTemplate = template;
-                        _backgroundColor = template.defaultBgColor;
-                        _initSlotValues();
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
+                final sign = categorySigns[index];
+                final isSelected = activeInfo.signIds.contains(sign.id);
+                return InkWell(
+                  onTap: () => _toggleSign(sign.id),
+                  borderRadius: BorderRadius.circular(18),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
                         color: isSelected
-                            ? AppTheme.primaryColor.withValues(alpha: 0.2)
-                            : AppTheme.darkBg,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: isSelected
-                              ? AppTheme.primaryColor
-                              : AppTheme.darkBorder,
-                          width: isSelected ? 2 : 1,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: AppTheme.primaryColor.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
+                            ? AppTheme.primaryColor
+                            : const Color(0xFF253046),
+                        width: isSelected ? 2 : 1,
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: template.defaultBgColor,
-                              borderRadius: BorderRadius.circular(6),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
-                                  blurRadius: 4,
-                                  offset: const Offset(1, 1),
-                                ),
-                              ],
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.signpost,
-                                size: 18,
-                                color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: CustomPaint(
+                              painter: TrafficSignPainter(
+                                sign: sign,
+                                scale: 0.92,
                               ),
+                              child: const SizedBox.expand(),
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  template.name,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: isSelected
-                                        ? AppTheme.primaryColor
-                                        : AppTheme.textPrimaryDark,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  '${template.canvasSize.width.toInt()}x${template.canvasSize.height.toInt()}',
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    color: AppTheme.textSecondaryDark,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        ),
+                        Text(
+                          sign.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
-                          if (isSelected)
-                            const Icon(
-                              Icons.check_circle,
-                              size: 16,
-                              color: AppTheme.primaryColor,
-                            ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          sign.code,
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -179,628 +585,174 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
     );
   }
 
-  Widget _buildMainArea() {
-    return Container(
-      color: AppTheme.darkBg,
-      child: Column(
-        children: [
-          _buildToolbar(),
-          Expanded(child: _buildCanvas()),
-          _buildStatusBar(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToolbar() {
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: const BoxDecoration(
-        color: AppTheme.darkBgSecondary,
-        border: Border(bottom: BorderSide(color: AppTheme.darkBorder)),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.white70),
-            tooltip: '返回',
-          ),
-          const SizedBox(width: 4),
-          PopupMenuButton<String>(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppTheme.darkBg,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppTheme.darkBorder),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.folder_open,
-                    size: 16,
-                    color: Colors.white70,
-                  ),
-                  const SizedBox(width: 8),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      '$_projectName${_hasUnsavedChanges ? ' *' : ''}',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.arrow_drop_down,
-                    size: 16,
-                    color: Colors.white70,
-                  ),
-                ],
-              ),
-            ),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'new',
-                child: Row(
-                  children: [
-                    Icon(Icons.add, size: 18),
-                    SizedBox(width: 12),
-                    Text('新建项目'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'open',
-                child: Row(
-                  children: [
-                    Icon(Icons.folder_open, size: 18),
-                    SizedBox(width: 12),
-                    Text('打开项目'),
-                  ],
-                ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(
-                value: 'save',
-                child: Row(
-                  children: [
-                    Icon(Icons.save, size: 18),
-                    SizedBox(width: 12),
-                    Text('保存'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'saveas',
-                child: Row(
-                  children: [
-                    Icon(Icons.save_as, size: 18),
-                    SizedBox(width: 12),
-                    Text('另存为...'),
-                  ],
-                ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings, size: 18),
-                    SizedBox(width: 12),
-                    Text('项目设置'),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (value) {
-              switch (value) {
-                case 'new':
-                  _newProject();
-                  break;
-                case 'open':
-                  _openProject();
-                  break;
-                case 'save':
-                  _saveProject();
-                  break;
-                case 'saveas':
-                  _saveProjectAs();
-                  break;
-                case 'settings':
-                  _showProjectSettings();
-                  break;
-              }
-            },
-          ),
-          const SizedBox(width: 12),
-          if (_selectedTemplate != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _backgroundColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _selectedTemplate!.name,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          const Spacer(),
-          ElevatedButton.icon(
-            onPressed: _exportImage,
-            icon: const Icon(Icons.download, size: 18),
-            label: const Text('导出PNG'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCanvas() {
-    if (_selectedTemplate == null) {
-      return const Center(
-        child: Text(
-          '请选择模板',
-          style: TextStyle(color: AppTheme.textSecondaryDark),
-        ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: CustomPaint(
-          size: Size.infinite,
-          painter: TemplatePainter(
-            template: _selectedTemplate!,
-            slotValues: _slotValues,
-            backgroundColor: _backgroundColor,
-            selectedSlotId: _selectedSlotId,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatusBar() {
-    return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: const BoxDecoration(
-        color: AppTheme.darkBgSecondary,
-        border: Border(top: BorderSide(color: AppTheme.darkBorder)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              _currentFilePath ?? '新建项目 - 点击左上角菜单保存',
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppTheme.textSecondaryDark,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (_selectedTemplate != null)
-            Text(
-              '${_selectedTemplate!.name} ${_selectedTemplate!.canvasSize.width.toInt()}x${_selectedTemplate!.canvasSize.height.toInt()}',
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppTheme.textSecondaryDark,
-              ),
-            ),
-          if (_hasUnsavedChanges) ...[
-            const SizedBox(width: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                '未保存',
-                style: TextStyle(fontSize: 10, color: Colors.orange),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRightPanel() {
-    if (_selectedTemplate == null) {
-      return Container(
-        width: 300,
-        color: AppTheme.darkBgSecondary,
-        child: const Center(
-          child: Text(
-            '请选择模板',
-            style: TextStyle(color: AppTheme.textSecondaryDark),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      width: 300,
-      color: AppTheme.darkBgSecondary,
-      child: Column(
-        children: [
-          Container(
-            height: 56,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppTheme.darkBorder)),
-            ),
-            child: const Row(
-              children: [
-                Text(
-                  '编辑内容',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimaryDark,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildColorPresets(),
-                  const SizedBox(height: 24),
-                  ..._selectedTemplate!.slots.map(
-                    (slot) => _buildSlotEditor(slot),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildColorPresets() {
+  Widget _buildSectionTitle(String title, String subtitle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '背景配色',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.primaryColor,
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _buildColorPreset('高速绿', const Color(0xFF059669)),
-            _buildColorPreset('高速蓝', const Color(0xFF1D4ED8)),
-            _buildColorPreset('城市蓝', const Color(0xFF0284C7)),
-            _buildColorPreset('景区棕', const Color(0xFF92400E)),
-            _buildColorPreset('深灰', const Color(0xFF1F2937)),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: const TextStyle(color: Colors.white54, fontSize: 12),
         ),
       ],
     );
   }
 
-  Widget _buildColorPreset(String name, Color color) {
-    final isSelected = _backgroundColor == color;
-    return InkWell(
-      onTap: () => setState(() {
-        _backgroundColor = color;
-        _hasUnsavedChanges = true;
-      }),
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 70,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(8),
-          border: isSelected
-              ? Border.all(color: AppTheme.accentColor, width: 2)
-              : null,
-        ),
-        child: Text(
-          name,
-          style: const TextStyle(
-            fontSize: 10,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-          ),
-          textAlign: TextAlign.center,
-        ),
+  Widget _buildColorHint(String title, Color color) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF1F2937)),
       ),
-    );
-  }
-
-  Widget _buildSlotEditor(TemplateSlot slot) {
-    final isSelected = _selectedSlotId == slot.id;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () => setState(() => _selectedSlotId = slot.id),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppTheme.primaryColor.withValues(alpha: 0.1)
-                : AppTheme.darkBg,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
+      child: Row(
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white24),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      slot.label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isSelected
-                            ? AppTheme.primaryColor
-                            : AppTheme.textSecondaryDark,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  if (isSelected)
-                    const Icon(
-                      Icons.edit,
-                      size: 14,
-                      color: AppTheme.primaryColor,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.textPrimaryDark,
-                ),
-                decoration: InputDecoration(
-                  hintText: '输入${slot.label}...',
-                  hintStyle: const TextStyle(color: AppTheme.textSecondaryDark),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: AppTheme.darkBgSecondary,
-                ),
-                controller: TextEditingController(
-                  text: _slotValues[slot.id] ?? '',
-                ),
-                onChanged: (v) => setState(() {
-                  _slotValues[slot.id] = v;
-                  _hasUnsavedChanges = true;
-                }),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _exportImage() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('导出功能开发中...')));
-  }
-
-  void _newProject() {
-    setState(() {
-      _projectName = '新项目';
-      _currentFilePath = null;
-      _selectedTemplate = TemplatePresets.all.first;
-      _initSlotValues();
-      _hasUnsavedChanges = false;
-    });
-  }
-
-  Future<void> _openProject() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['ved', 'json'],
-        dialogTitle: '打开项目',
-      );
-      if (result != null && result.files.single.path != null) {
-        final file = File(result.files.single.path!);
-        final content = await file.readAsString();
-        final json = jsonDecode(content) as Map<String, dynamic>;
-
-        setState(() {
-          _projectName = json['name'] as String? ?? '新项目';
-          _currentFilePath = file.path;
-          _hasUnsavedChanges = false;
-        });
-
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('项目已打开')));
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('打开失败: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  Future<void> _saveProject() async {
-    try {
-      String? filePath = _currentFilePath;
-      if (filePath == null) {
-        final result = await FilePicker.platform.saveFile(
-          dialogTitle: '保存项目',
-          fileName: '$_projectName.ved',
-          allowedExtensions: ['ved'],
-          type: FileType.custom,
-        );
-        if (result == null) return;
-        filePath = result.endsWith('.ved') ? result : '$result.ved';
-      }
-
-      final json = {
-        'name': _projectName,
-        'version': '1.0.0',
-        'templateName': _selectedTemplate?.name ?? '',
-        'slotValues': _slotValues,
-        'backgroundColor': _colorToHex(_backgroundColor),
-        'savedAt': DateTime.now().toIso8601String(),
-      };
-
-      await File(
-        filePath,
-      ).writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-
-      setState(() {
-        _currentFilePath = filePath;
-        _hasUnsavedChanges = false;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('已保存到: $filePath')));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  Future<void> _saveProjectAs() async {
-    try {
-      final result = await FilePicker.platform.saveFile(
-        dialogTitle: '另存为',
-        fileName: '$_projectName.ved',
-        allowedExtensions: ['ved'],
-        type: FileType.custom,
-      );
-      if (result == null) return;
-
-      String filePath = result.endsWith('.ved') ? result : '$result.ved';
-
-      final json = {
-        'name': _projectName,
-        'version': '1.0.0',
-        'templateName': _selectedTemplate?.name ?? '',
-        'slotValues': _slotValues,
-        'backgroundColor': _colorToHex(_backgroundColor),
-        'savedAt': DateTime.now().toIso8601String(),
-      };
-
-      await File(
-        filePath,
-      ).writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-
-      setState(() {
-        _currentFilePath = filePath;
-        _hasUnsavedChanges = false;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('已保存到: $filePath')));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  void _showProjectSettings() {
-    final nameController = TextEditingController(text: _projectName);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.darkBgSecondary,
-        title: const Text('项目设置', style: TextStyle(color: Colors.white)),
-        content: TextField(
-          controller: nameController,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            labelText: '项目名称',
-            labelStyle: TextStyle(color: Colors.white54),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nameController.text.trim().isNotEmpty) {
-                setState(() {
-                  _projectName = nameController.text.trim();
-                  _hasUnsavedChanges = true;
-                });
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('保存'),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white70, fontSize: 13),
           ),
         ],
       ),
     );
   }
 
-  String _colorToHex(Color color) {
-    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
-    return '#${argb.substring(2)}';
+  InputDecoration _inputDecoration(String label, String hint) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint.isEmpty ? null : hint,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      filled: true,
+      fillColor: const Color(0xFF0F172A),
+    );
+  }
+
+  void _updateDirection(String direction, DirectionInfo info) {
+    setState(() {
+      switch (direction) {
+        case 'north':
+          _scene = _scene.copyWith(north: info);
+          break;
+        case 'east':
+          _scene = _scene.copyWith(east: info);
+          break;
+        case 'south':
+          _scene = _scene.copyWith(south: info);
+          break;
+        case 'west':
+          _scene = _scene.copyWith(west: info);
+          break;
+      }
+    });
+  }
+
+  void _toggleSign(String signId) {
+    final info = _scene.directionInfo(_activeDirection);
+    final updatedIds = List<String>.from(info.signIds);
+    if (updatedIds.contains(signId)) {
+      updatedIds.remove(signId);
+    } else {
+      updatedIds.add(signId);
+    }
+    _updateDirection(_activeDirection, info.copyWith(signIds: updatedIds));
+  }
+
+  Future<void> _exportAllSigns() async {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('正在导出 PNG...')));
+
+    final paths = await ExportUtils.exportAllSigns(
+      _northKey,
+      _eastKey,
+      _southKey,
+      _westKey,
+      _scene,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (paths.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('导出失败')));
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('已导出 ${paths.length} 个 PNG 到文档目录 traffic_signs')),
+    );
+  }
+
+  String _directionName(String direction) {
+    return switch (direction) {
+      'north' => '北向',
+      'east' => '东向',
+      'south' => '南向',
+      'west' => '西向',
+      _ => '北向',
+    };
+  }
+
+  String _roadTypeLabel(RoadType type) {
+    return switch (type) {
+      RoadType.general => '普通道路',
+      RoadType.highway => '高速道路',
+      RoadType.scenic => '景区道路',
+    };
+  }
+
+  String _destinationTypeLabel(DestinationType type) {
+    return switch (type) {
+      DestinationType.general => '普通',
+      DestinationType.highway => '高速',
+      DestinationType.scenic => '景区',
+    };
+  }
+
+  String _shapeLabel(IntersectionShape shape) {
+    return switch (shape) {
+      IntersectionShape.crossroad => '十字路口',
+      IntersectionShape.skewLeft => '左高右低',
+      IntersectionShape.skewRight => '左低右高',
+      IntersectionShape.roundabout => '环岛',
+      IntersectionShape.tJunctionFrontLeft => '丁字路口(前+左)',
+      IntersectionShape.tJunctionFrontRight => '丁字路口(前+右)',
+      IntersectionShape.tJunctionLeftRight => '丁字路口(左+右)',
+      IntersectionShape.yJunction => '三岔路口',
+      IntersectionShape.diamondBridgeTop => '菱形桥(上跨)',
+      IntersectionShape.diamondBridgeBottom => '菱形桥(下穿)',
+    };
+  }
+
+  String _categoryLabel(SignCategory category) {
+    return switch (category) {
+      SignCategory.prohibition => '禁令',
+      SignCategory.warning => '警告',
+      SignCategory.mandatory => '指示',
+      SignCategory.indication => '指路',
+      SignCategory.information => '信息',
+    };
   }
 }
