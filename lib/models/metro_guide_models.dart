@@ -22,6 +22,7 @@ class MetroGuideItem {
   final String fileName;
   final GuideItemType type;
   final String? customUrl;
+  final String? customSvgContent;
   final CustomText? customText;
   final String? customColor;
   final bool hasColorBand;
@@ -32,6 +33,7 @@ class MetroGuideItem {
     required this.fileName,
     required this.type,
     this.customUrl,
+    this.customSvgContent,
     this.customText,
     this.customColor,
     this.hasColorBand = false,
@@ -54,6 +56,7 @@ class MetroGuideItem {
     String? fileName,
     GuideItemType? type,
     String? customUrl,
+    String? customSvgContent,
     CustomText? customText,
     String? customColor,
     bool? hasColorBand,
@@ -64,6 +67,7 @@ class MetroGuideItem {
       fileName: fileName ?? this.fileName,
       type: type ?? this.type,
       customUrl: customUrl ?? this.customUrl,
+      customSvgContent: customSvgContent ?? this.customSvgContent,
       customText: customText ?? this.customText,
       customColor: customColor ?? this.customColor,
       hasColorBand: hasColorBand ?? this.hasColorBand,
@@ -77,6 +81,7 @@ class MetroGuideItem {
       'fileName': fileName,
       'type': type.name,
       'customUrl': customUrl,
+      'customSvgContent': customSvgContent,
       'customText': customText?.toJson(),
       'customColor': customColor,
       'hasColorBand': hasColorBand,
@@ -93,6 +98,7 @@ class MetroGuideItem {
         orElse: () => GuideItemType.oth,
       ),
       customUrl: json['customUrl'] as String?,
+      customSvgContent: json['customSvgContent'] as String?,
       customText: json['customText'] != null
           ? CustomText.fromJson(json['customText'] as Map<String, dynamic>)
           : null,
@@ -443,6 +449,7 @@ class MetroGuideProject {
   final String city;
   final String backgroundColor;
   final List<MetroGuideItem> items;
+  final List<MetroGuideItem> customAssets;
   final DateTime createdAt;
   final DateTime lastModified;
 
@@ -453,6 +460,7 @@ class MetroGuideProject {
     required this.city,
     this.backgroundColor = '#001D31',
     required this.items,
+    this.customAssets = const [],
     required this.createdAt,
     required this.lastModified,
   });
@@ -465,6 +473,7 @@ class MetroGuideProject {
       'city': city,
       'backgroundColor': backgroundColor,
       'items': items.map((item) => item.toJson()).toList(),
+      'customAssets': customAssets.map((item) => item.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'lastModified': lastModified.toIso8601String(),
     };
@@ -482,6 +491,11 @@ class MetroGuideProject {
             (entry) => MetroGuideItem.fromJson(entry as Map<String, dynamic>),
           )
           .toList(),
+      customAssets: ((json['customAssets'] as List?) ?? const [])
+          .map(
+            (entry) => MetroGuideItem.fromJson(entry as Map<String, dynamic>),
+          )
+          .toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       lastModified: DateTime.parse(json['lastModified'] as String),
     );
@@ -494,6 +508,7 @@ class MetroGuideProject {
     String? city,
     String? backgroundColor,
     List<MetroGuideItem>? items,
+    List<MetroGuideItem>? customAssets,
     DateTime? createdAt,
     DateTime? lastModified,
   }) {
@@ -504,6 +519,7 @@ class MetroGuideProject {
       city: city ?? this.city,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       items: items ?? this.items,
+      customAssets: customAssets ?? this.customAssets,
       createdAt: createdAt ?? this.createdAt,
       lastModified: lastModified ?? this.lastModified,
     );
@@ -520,6 +536,7 @@ class MetroGuideProject {
       description: description,
       city: city,
       items: const [],
+      customAssets: const [],
       createdAt: now,
       lastModified: now,
     );

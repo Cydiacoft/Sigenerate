@@ -5,18 +5,24 @@ import '../theme/app_theme.dart';
 import 'metro_guide_toolbar_item.dart';
 
 class MetroGuideToolbar extends StatelessWidget {
-  final Function(MetroGuideItem) onAddItem;
-  final Function(String) onEditItem;
-  final VoidCallback onAddText;
-  final VoidCallback onAddColorBand;
-
   const MetroGuideToolbar({
     super.key,
     required this.onAddItem,
     required this.onEditItem,
     required this.onAddText,
     required this.onAddColorBand,
+    this.onAddCustomLine,
+    this.onImportSvg,
+    this.customItems = const {},
   });
+
+  final Function(MetroGuideItem) onAddItem;
+  final Function(String) onEditItem;
+  final VoidCallback onAddText;
+  final VoidCallback onAddColorBand;
+  final VoidCallback? onAddCustomLine;
+  final VoidCallback? onImportSvg;
+  final Map<GuideItemType, List<MetroGuideItem>> customItems;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +45,9 @@ class MetroGuideToolbar extends StatelessWidget {
                     onAddItem: onAddItem,
                     onAddText: onAddText,
                     onAddColorBand: onAddColorBand,
+                    onAddCustomLine: onAddCustomLine,
+                    onImportSvg: onImportSvg,
+                    customItems: customItems[type] ?? const [],
                   ),
               ],
             ),
@@ -84,17 +93,23 @@ class MetroGuideToolbar extends StatelessWidget {
 }
 
 class _CategoryPanel extends StatefulWidget {
-  final GuideItemType type;
-  final Function(MetroGuideItem) onAddItem;
-  final VoidCallback onAddText;
-  final VoidCallback onAddColorBand;
-
   const _CategoryPanel({
     required this.type,
     required this.onAddItem,
     required this.onAddText,
     required this.onAddColorBand,
+    required this.customItems,
+    this.onAddCustomLine,
+    this.onImportSvg,
   });
+
+  final GuideItemType type;
+  final Function(MetroGuideItem) onAddItem;
+  final VoidCallback onAddText;
+  final VoidCallback onAddColorBand;
+  final VoidCallback? onAddCustomLine;
+  final VoidCallback? onImportSvg;
+  final List<MetroGuideItem> customItems;
 
   @override
   State<_CategoryPanel> createState() => _CategoryPanelState();
@@ -112,6 +127,8 @@ class _CategoryPanelState extends State<_CategoryPanel> {
   @override
   Widget build(BuildContext context) {
     final items = GuideItemAssets.groupedItems[widget.type] ?? const <String>[];
+    final totalCount = items.length + widget.customItems.length;
+
     return Column(
       children: [
         InkWell(
@@ -139,7 +156,7 @@ class _CategoryPanelState extends State<_CategoryPanel> {
                         ),
                       ),
                       Text(
-                        '${items.length} 个元素',
+                        '$totalCount 个元素',
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.white.withValues(alpha: 0.55),
@@ -182,6 +199,105 @@ class _CategoryPanelState extends State<_CategoryPanel> {
                       ],
                     ),
                   ),
+                if (widget.type == GuideItemType.clss &&
+                    widget.onAddCustomLine != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: widget.onAddCustomLine,
+                            icon: const Icon(Icons.route, size: 14),
+                            label: const Text('自定义线路'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF7D8B2F),
+                              side: const BorderSide(color: Color(0xFF7D8B2F)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (widget.type == GuideItemType.oth && widget.onImportSvg != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: widget.onImportSvg,
+                            icon: const Icon(Icons.upload_file, size: 14),
+                            label: const Text('导入本地 SVG'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFFFAC000),
+                              side: const BorderSide(color: Color(0xFFFAC000)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (widget.customItems.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '自定义素材',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.65),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (widget.customItems.isNotEmpty)
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.customItems.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 1.8,
+                    ),
+                    itemBuilder: (context, index) {
+                      final template = widget.customItems[index];
+                      final item = MetroGuideItem(
+                        fileName: template.fileName,
+                        type: template.type,
+                        customUrl: template.customUrl,
+                        customSvgContent: template.customSvgContent,
+                        customText: template.customText,
+                        customColor: template.customColor,
+                        hasColorBand: template.hasColorBand,
+                        colorBandColor: template.colorBandColor,
+                      );
+                      return Draggable<MetroGuideItem>(
+                        data: item,
+                        feedback: Material(
+                          color: Colors.transparent,
+                          child: SizedBox(
+                            width: 96,
+                            child: MetroGuideToolbarItem(item: item),
+                          ),
+                        ),
+                        childWhenDragging: Opacity(
+                          opacity: 0.35,
+                          child: MetroGuideToolbarItem(item: item),
+                        ),
+                        child: MetroGuideToolbarItem(
+                          item: item,
+                          onTap: () => widget.onAddItem(item),
+                        ),
+                      );
+                    },
+                  ),
+                if (widget.customItems.isNotEmpty) const SizedBox(height: 8),
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),

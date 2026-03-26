@@ -55,6 +55,7 @@ class TrafficSign {
     required this.primaryColor,
     required this.secondaryColor,
     this.borderColor,
+    this.assetPath,
     this.symbol = SignSymbol.none,
     this.value,
     this.description,
@@ -68,9 +69,12 @@ class TrafficSign {
   final Color primaryColor;
   final Color secondaryColor;
   final Color? borderColor;
+  final String? assetPath;
   final SignSymbol symbol;
   final String? value;
   final String? description;
+
+  bool get hasSvgAsset => assetPath != null && assetPath!.isNotEmpty;
 
   String get categoryLabel {
     switch (category) {

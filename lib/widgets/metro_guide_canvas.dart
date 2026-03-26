@@ -226,6 +226,8 @@ class MetroGuideCanvasState extends State<MetroGuideCanvas> {
         MetroGuideItem(
           fileName: source.fileName,
           type: source.type,
+          customUrl: source.customUrl,
+          customSvgContent: source.customSvgContent,
           customText: source.customText,
           customColor: source.customColor,
           hasColorBand: source.hasColorBand,
@@ -251,6 +253,8 @@ class MetroGuideCanvasState extends State<MetroGuideCanvas> {
         MetroGuideItem(
           fileName: item.fileName,
           type: item.type,
+          customUrl: item.customUrl,
+          customSvgContent: item.customSvgContent,
           customText: item.customText,
           customColor: item.customColor,
           hasColorBand: item.hasColorBand,

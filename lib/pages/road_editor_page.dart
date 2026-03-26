@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../models/intersection_scene.dart';
 import '../models/traffic_sign.dart';
 import '../painters/road_sign_painter.dart';
-import '../painters/traffic_sign_painter.dart';
 import '../signs/gb5768_signs.dart';
 import '../theme/app_theme.dart';
 import '../utils/export_utils.dart';
+import '../widgets/road_sign_glyph.dart';
 
 class RoadEditorPage extends StatefulWidget {
   const RoadEditorPage({super.key});
@@ -51,6 +51,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
 
   String _activeDirection = 'north';
   SignCategory _activeCategory = SignCategory.prohibition;
+  String _keyword = '';
 
   late final TextEditingController _nameController;
   final Map<String, TextEditingController> _roadControllers = {};
@@ -60,14 +61,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: _scene.name);
-    for (final entry in _scene.directions.entries) {
-      _roadControllers[entry.key] = TextEditingController(
-        text: entry.value.roadName,
-      );
-      _destinationControllers[entry.key] = TextEditingController(
-        text: entry.value.destination,
-      );
-    }
+    _syncControllers();
   }
 
   @override
@@ -82,8 +76,31 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
     super.dispose();
   }
 
+  void _syncControllers() {
+    for (final entry in _scene.directions.entries) {
+      _roadControllers.putIfAbsent(
+        entry.key,
+        () => TextEditingController(text: entry.value.roadName),
+      );
+      _destinationControllers.putIfAbsent(
+        entry.key,
+        () => TextEditingController(text: entry.value.destination),
+      );
+      _roadControllers[entry.key]!.text = entry.value.roadName;
+      _destinationControllers[entry.key]!.text = entry.value.destination;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final activeInfo = _scene.directionInfo(_activeDirection);
+    final categorySigns =
+        Gb5768Signs.groupedByCategory[_activeCategory] ?? const <TrafficSign>[];
+    final filteredSigns = categorySigns.where((sign) {
+      return _keyword.trim().isEmpty ||
+          sign.name.toLowerCase().contains(_keyword.toLowerCase());
+    }).toList();
+
     return Scaffold(
       backgroundColor: const Color(0xFF0B1120),
       body: SafeArea(
@@ -93,9 +110,9 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
             Expanded(
               child: Row(
                 children: [
-                  _buildConfigPanel(),
-                  Expanded(child: _buildPreviewArea()),
-                  _buildLibraryPanel(),
+                  _buildConfigPanel(activeInfo),
+                  Expanded(child: _buildPreviewPanel()),
+                  _buildLibraryPanel(activeInfo, filteredSigns),
                 ],
               ),
             ),
@@ -107,7 +124,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
 
   Widget _buildToolbar(BuildContext context) {
     return Container(
-      height: 72,
+      height: 76,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: const BoxDecoration(
         color: Color(0xFF111827),
@@ -122,8 +139,8 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
           ),
           const SizedBox(width: 8),
           const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 '道路编辑器',
@@ -134,7 +151,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 ),
               ),
               Text(
-                '参考 lupai 交互重构，路标元素按 GB 5768.2-2022 分类',
+                'SVG 素材优先渲染，逐步替换旧的手绘近似图标',
                 style: TextStyle(color: Colors.white60, fontSize: 12),
               ),
             ],
@@ -150,8 +167,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
     );
   }
 
-  Widget _buildConfigPanel() {
-    final info = _scene.directionInfo(_activeDirection);
+  Widget _buildConfigPanel(DirectionInfo info) {
     return Container(
       width: 360,
       decoration: const BoxDecoration(
@@ -163,7 +179,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle('基础设置', '按参考页改成路口配置驱动，而不是旧模板编辑。'),
+            _buildSectionTitle('路口设置', '先定义路口，再针对当前方向细化内容。'),
             const SizedBox(height: 14),
             TextField(
               controller: _nameController,
@@ -194,7 +210,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 });
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -202,26 +218,26 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 FilterChip(
                   label: const Text('中文方向词'),
                   selected: _scene.useChineseDirection,
-                  onSelected: (selected) {
+                  onSelected: (value) {
                     setState(() {
-                      _scene = _scene.copyWith(useChineseDirection: selected);
+                      _scene = _scene.copyWith(useChineseDirection: value);
                     });
                   },
                 ),
                 FilterChip(
                   label: const Text('英文方向词'),
                   selected: _scene.useEnglishDirection,
-                  onSelected: (selected) {
+                  onSelected: (value) {
                     setState(() {
-                      _scene = _scene.copyWith(useEnglishDirection: selected);
+                      _scene = _scene.copyWith(useEnglishDirection: value);
                     });
                   },
                 ),
               ],
             ),
             const SizedBox(height: 28),
-            _buildSectionTitle('方向配置', '和参考页一致，按四个方向分别录入道路与通往地点。'),
-            const SizedBox(height: 14),
+            _buildSectionTitle('当前方向', '把修改集中在当前方向，减少来回跳转。'),
+            const SizedBox(height: 12),
             SegmentedButton<String>(
               segments: const [
                 ButtonSegment(value: 'north', label: Text('北')),
@@ -240,14 +256,13 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
             TextField(
               controller: _roadControllers[_activeDirection],
               decoration: _inputDecoration('道路名称', '例如：学院路'),
-              onChanged: (value) => _updateDirection(
-                _activeDirection,
-                info.copyWith(roadName: value),
-              ),
+              onChanged: (value) {
+                _updateDirection(_activeDirection, info.copyWith(roadName: value));
+              },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             DropdownButtonFormField<RoadType>(
-              key: ValueKey('roadType-$_activeDirection-${info.roadType.name}'),
+              key: ValueKey('road-$_activeDirection-${info.roadType.name}'),
               initialValue: info.roadType,
               decoration: _inputDecoration('道路类型', ''),
               dropdownColor: const Color(0xFF0F172A),
@@ -261,25 +276,24 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 if (type == null) {
                   return;
                 }
-                _updateDirection(
-                  _activeDirection,
-                  info.copyWith(roadType: type),
-                );
+                _updateDirection(_activeDirection, info.copyWith(roadType: type));
               },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             TextField(
               controller: _destinationControllers[_activeDirection],
               decoration: _inputDecoration('通往地点', '例如：高铁站 / 高速入口 / 湿地公园'),
-              onChanged: (value) => _updateDirection(
-                _activeDirection,
-                info.copyWith(destination: value),
-              ),
+              onChanged: (value) {
+                _updateDirection(
+                  _activeDirection,
+                  info.copyWith(destination: value),
+                );
+              },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             DropdownButtonFormField<DestinationType>(
               key: ValueKey(
-                'destinationType-$_activeDirection-${info.destinationType.name}',
+                'destination-$_activeDirection-${info.destinationType.name}',
               ),
               initialValue: info.destinationType,
               decoration: _inputDecoration('地点类型', ''),
@@ -300,19 +314,51 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 );
               },
             ),
-            const SizedBox(height: 28),
-            _buildSectionTitle('配色约束', '普通道路蓝底白字，高速绿底白字，景区棕底白字。'),
+            const SizedBox(height: 24),
+            _buildSectionTitle('已选路标元素', '直接在这里删除，不用回素材库反向查找。'),
             const SizedBox(height: 12),
-            _buildColorHint('普通道路', _scene.backgroundColor),
-            _buildColorHint('高速道路', _scene.highwayColor),
-            _buildColorHint('景区道路', _scene.scenicColor),
+            _buildSelectedSigns(info),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPreviewArea() {
+  Widget _buildSelectedSigns(DirectionInfo info) {
+    if (info.signIds.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F172A),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFF1F2937)),
+        ),
+        child: const Text(
+          '当前方向还没有添加路标元素',
+          style: TextStyle(color: Colors.white54, fontSize: 13),
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: info.signIds.map((id) {
+        final sign = Gb5768Signs.findById(id);
+        if (sign == null) {
+          return const SizedBox.shrink();
+        }
+        return InputChip(
+          avatar: RoadSignGlyph(sign: sign, size: 24, padding: EdgeInsets.zero),
+          label: Text(sign.name),
+          onDeleted: () => _toggleSign(id),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPreviewPanel() {
     return Container(
       color: const Color(0xFF0B1120),
       child: SingleChildScrollView(
@@ -320,18 +366,27 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSceneCard(),
+            _buildOverviewCard(),
             const SizedBox(height: 20),
-            _buildPreviewGrid(),
+            Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              children: [
+                _buildDirectionCard('north', '北向', _northKey),
+                _buildDirectionCard('east', '东向', _eastKey),
+                _buildDirectionCard('south', '南向', _southKey),
+                _buildDirectionCard('west', '西向', _westKey),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSceneCard() {
+  Widget _buildOverviewCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: const Color(0xFF111827),
         borderRadius: BorderRadius.circular(20),
@@ -340,53 +395,31 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '路口总览',
-            style: TextStyle(
+          Text(
+            _scene.name.isEmpty ? '未命名路口' : _scene.name,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            _scene.name.isEmpty ? '未命名路口' : _scene.name,
-            style: const TextStyle(color: Colors.white60, fontSize: 13),
-          ),
-          const SizedBox(height: 18),
-          AspectRatio(
-            aspectRatio: 2.3,
-            child: CustomPaint(
-              painter: IntersectionOverviewPainter(scene: _scene),
-            ),
+          const Text(
+            '牌面预览仍在继续校正比例，但路标元素现在优先使用 SVG 资产。',
+            style: TextStyle(color: Colors.white60, fontSize: 12),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPreviewGrid() {
-    final cards = [
-      ('north', '北向', _northKey),
-      ('east', '东向', _eastKey),
-      ('south', '南向', _southKey),
-      ('west', '西向', _westKey),
-    ];
+  Widget _buildDirectionCard(String direction, String label, GlobalKey key) {
+    final info = _scene.directionInfo(direction);
+    final signs = info.signIds
+        .map(Gb5768Signs.findById)
+        .whereType<TrafficSign>()
+        .toList();
 
-    return Wrap(
-      spacing: 20,
-      runSpacing: 20,
-      children: cards.map((card) {
-        return _buildDirectionPreviewCard(card.$1, card.$2, card.$3);
-      }).toList(),
-    );
-  }
-
-  Widget _buildDirectionPreviewCard(
-    String direction,
-    String label,
-    GlobalKey key,
-  ) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -394,7 +427,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         });
       },
       child: Container(
-        width: 340,
+        width: 360,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: const Color(0xFF111827),
@@ -421,20 +454,60 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 ),
                 const Spacer(),
                 Text(
-                  '${_scene.directionInfo(direction).signIds.length} 个路标元素',
+                  '${signs.length} 个路标元素',
                   style: const TextStyle(color: Colors.white54, fontSize: 12),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             RepaintBoundary(
               key: key,
               child: AspectRatio(
-                aspectRatio: 0.85,
+                aspectRatio: 0.86,
                 child: CustomPaint(
                   painter: RoadSignPainter(scene: _scene, direction: direction),
                 ),
               ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 68,
+              child: signs.isEmpty
+                  ? const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '未挂接路标元素',
+                        style: TextStyle(color: Colors.white54, fontSize: 12),
+                      ),
+                    )
+                  : ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: signs.length,
+                      separatorBuilder: (_, index) =>
+                          const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        final sign = signs[index];
+                        return Tooltip(
+                          message: sign.name,
+                          child: Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: const Color(0xFF253046)),
+                            ),
+                            child: Center(
+                              child: RoadSignGlyph(
+                                sign: sign,
+                                size: 44,
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -442,13 +515,12 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
     );
   }
 
-  Widget _buildLibraryPanel() {
-    final activeInfo = _scene.directionInfo(_activeDirection);
-    final categorySigns =
-        Gb5768Signs.groupedByCategory[_activeCategory] ?? const [];
-
+  Widget _buildLibraryPanel(
+    DirectionInfo activeInfo,
+    List<TrafficSign> filteredSigns,
+  ) {
     return Container(
-      width: 360,
+      width: 380,
       decoration: const BoxDecoration(
         color: Color(0xFF111827),
         border: Border(left: BorderSide(color: Color(0xFF1F2937))),
@@ -472,9 +544,18 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 const SizedBox(height: 6),
                 Text(
                   '当前挂接方向：${_directionName(_activeDirection)}',
-                  style: const TextStyle(color: Colors.white60, fontSize: 13),
+                  style: const TextStyle(color: Colors.white60, fontSize: 12),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
+                TextField(
+                  decoration: _inputDecoration('搜索元素', '按名称过滤当前分类'),
+                  onChanged: (value) {
+                    setState(() {
+                      _keyword = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -490,41 +571,27 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                     );
                   }).toList(),
                 ),
+                const SizedBox(height: 10),
+                Text(
+                  '已选 ${activeInfo.signIds.length} 个元素',
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
+                ),
               ],
             ),
           ),
-          if (activeInfo.signIds.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: activeInfo.signIds.map((id) {
-                  final sign = Gb5768Signs.findById(id);
-                  if (sign == null) {
-                    return const SizedBox.shrink();
-                  }
-                  return InputChip(
-                    label: Text(sign.name),
-                    onDeleted: () => _toggleSign(id),
-                  );
-                }).toList(),
-              ),
-            ),
-          const SizedBox(height: 12),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 12,
+                childAspectRatio: 0.9,
                 crossAxisSpacing: 12,
-                childAspectRatio: 0.88,
+                mainAxisSpacing: 12,
               ),
-              itemCount: categorySigns.length,
+              itemCount: filteredSigns.length,
               itemBuilder: (context, index) {
-                final sign = categorySigns[index];
-                final isSelected = activeInfo.signIds.contains(sign.id);
+                final sign = filteredSigns[index];
+                final selected = activeInfo.signIds.contains(sign.id);
                 return InkWell(
                   onTap: () => _toggleSign(sign.id),
                   borderRadius: BorderRadius.circular(18),
@@ -534,31 +601,28 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                       color: const Color(0xFF0F172A),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: isSelected
+                        color: selected
                             ? AppTheme.primaryColor
                             : const Color(0xFF253046),
-                        width: isSelected ? 2 : 1,
+                        width: selected ? 2 : 1,
                       ),
                     ),
                     child: Column(
                       children: [
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: CustomPaint(
-                              painter: TrafficSignPainter(
-                                sign: sign,
-                                scale: 0.92,
-                              ),
-                              child: const SizedBox.expand(),
+                          child: Center(
+                            child: RoadSignGlyph(
+                              sign: sign,
+                              size: 86,
+                              padding: EdgeInsets.zero,
                             ),
                           ),
                         ),
                         Text(
                           sign.name,
-                          textAlign: TextAlign.center,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -567,9 +631,11 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          sign.code,
-                          style: const TextStyle(
-                            color: Colors.white54,
+                          sign.hasSvgAsset ? 'SVG 资产' : 'Fallback',
+                          style: TextStyle(
+                            color: sign.hasSvgAsset
+                                ? const Color(0xFF86EFAC)
+                                : Colors.orange,
                             fontSize: 10,
                           ),
                         ),
@@ -606,36 +672,6 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
     );
   }
 
-  Widget _buildColorHint(String title, Color color) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1F2937)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 18,
-            height: 18,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white24),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
-
   InputDecoration _inputDecoration(String label, String hint) {
     return InputDecoration(
       labelText: label,
@@ -662,18 +698,19 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
           _scene = _scene.copyWith(west: info);
           break;
       }
+      _syncControllers();
     });
   }
 
   void _toggleSign(String signId) {
     final info = _scene.directionInfo(_activeDirection);
-    final updatedIds = List<String>.from(info.signIds);
-    if (updatedIds.contains(signId)) {
-      updatedIds.remove(signId);
+    final updated = List<String>.from(info.signIds);
+    if (updated.contains(signId)) {
+      updated.remove(signId);
     } else {
-      updatedIds.add(signId);
+      updated.add(signId);
     }
-    _updateDirection(_activeDirection, info.copyWith(signIds: updatedIds));
+    _updateDirection(_activeDirection, info.copyWith(signIds: updated));
   }
 
   Future<void> _exportAllSigns() async {
@@ -706,53 +743,79 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
   }
 
   String _directionName(String direction) {
-    return switch (direction) {
-      'north' => '北向',
-      'east' => '东向',
-      'south' => '南向',
-      'west' => '西向',
-      _ => '北向',
-    };
+    switch (direction) {
+      case 'north':
+        return '北向';
+      case 'east':
+        return '东向';
+      case 'south':
+        return '南向';
+      case 'west':
+        return '西向';
+      default:
+        return '北向';
+    }
   }
 
   String _roadTypeLabel(RoadType type) {
-    return switch (type) {
-      RoadType.general => '普通道路',
-      RoadType.highway => '高速道路',
-      RoadType.scenic => '景区道路',
-    };
+    switch (type) {
+      case RoadType.general:
+        return '普通道路';
+      case RoadType.highway:
+        return '高速道路';
+      case RoadType.scenic:
+        return '景区道路';
+    }
   }
 
   String _destinationTypeLabel(DestinationType type) {
-    return switch (type) {
-      DestinationType.general => '普通',
-      DestinationType.highway => '高速',
-      DestinationType.scenic => '景区',
-    };
+    switch (type) {
+      case DestinationType.general:
+        return '普通';
+      case DestinationType.highway:
+        return '高速';
+      case DestinationType.scenic:
+        return '景区';
+    }
   }
 
   String _shapeLabel(IntersectionShape shape) {
-    return switch (shape) {
-      IntersectionShape.crossroad => '十字路口',
-      IntersectionShape.skewLeft => '左高右低',
-      IntersectionShape.skewRight => '左低右高',
-      IntersectionShape.roundabout => '环岛',
-      IntersectionShape.tJunctionFrontLeft => '丁字路口(前+左)',
-      IntersectionShape.tJunctionFrontRight => '丁字路口(前+右)',
-      IntersectionShape.tJunctionLeftRight => '丁字路口(左+右)',
-      IntersectionShape.yJunction => '三岔路口',
-      IntersectionShape.diamondBridgeTop => '菱形桥(上跨)',
-      IntersectionShape.diamondBridgeBottom => '菱形桥(下穿)',
-    };
+    switch (shape) {
+      case IntersectionShape.crossroad:
+        return '十字路口';
+      case IntersectionShape.skewLeft:
+        return '左高右低';
+      case IntersectionShape.skewRight:
+        return '左低右高';
+      case IntersectionShape.roundabout:
+        return '环岛';
+      case IntersectionShape.tJunctionFrontLeft:
+        return '丁字路口(前+左)';
+      case IntersectionShape.tJunctionFrontRight:
+        return '丁字路口(前+右)';
+      case IntersectionShape.tJunctionLeftRight:
+        return '丁字路口(左+右)';
+      case IntersectionShape.yJunction:
+        return '三岔路口';
+      case IntersectionShape.diamondBridgeTop:
+        return '菱形桥(上跨)';
+      case IntersectionShape.diamondBridgeBottom:
+        return '菱形桥(下穿)';
+    }
   }
 
   String _categoryLabel(SignCategory category) {
-    return switch (category) {
-      SignCategory.prohibition => '禁令',
-      SignCategory.warning => '警告',
-      SignCategory.mandatory => '指示',
-      SignCategory.indication => '指路',
-      SignCategory.information => '信息',
-    };
+    switch (category) {
+      case SignCategory.prohibition:
+        return '禁令';
+      case SignCategory.warning:
+        return '警告';
+      case SignCategory.mandatory:
+        return '指示';
+      case SignCategory.indication:
+        return '指路';
+      case SignCategory.information:
+        return '信息';
+    }
   }
 }

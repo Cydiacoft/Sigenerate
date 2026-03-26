@@ -21,6 +21,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
   MetroGuideProject? _currentProject;
   String? _currentFilePath;
   List<MetroGuideItem> _items = [];
+  List<MetroGuideItem> _customAssets = [];
   MetroCityStyle _selectedCity = MetroCityStyle.shanghai;
   String _backgroundColor = '#001D31';
   bool _hasUnsavedChanges = false;
@@ -41,6 +42,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
       );
       _currentFilePath = null;
       _items = [];
+      _customAssets = [];
       _hasUnsavedChanges = false;
     });
   }
@@ -112,6 +114,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
           _currentProject = project;
           _currentFilePath = file.path;
           _items = project.items;
+          _customAssets = project.customAssets;
           _selectedCity = MetroCityStyle.values.firstWhere(
             (s) => s.name == project.city,
             orElse: () => MetroCityStyle.shanghai,
@@ -217,6 +220,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
       city: _selectedCity.name,
       backgroundColor: _backgroundColor,
       items: _items,
+      customAssets: _customAssets,
       createdAt: _currentProject?.createdAt ?? DateTime.now(),
       lastModified: DateTime.now(),
     );
@@ -330,12 +334,55 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
     _showColorBandDialog();
   }
 
+  void _onAddCustomLine() {
+    _showCustomLineDialog();
+  }
+
+  Future<void> _onImportSvg() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['svg'],
+      dialogTitle: '导入本地 SVG',
+    );
+
+    final path = result?.files.single.path;
+    if (path == null) {
+      return;
+    }
+
+    try {
+      final content = await File(path).readAsString();
+      final item = MetroGuideItem(
+        fileName: 'oth@local.svg',
+        type: GuideItemType.oth,
+        customUrl: path,
+        customSvgContent: content,
+        customText: CustomText(cn: result!.files.single.name, en: ''),
+      );
+
+      setState(() {
+        _customAssets = [..._customAssets, item];
+        _items = [..._items, item];
+        _hasUnsavedChanges = true;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('导入 SVG 失败: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
   void _showEditDialog(String itemId) {
     final item = _items.firstWhere((i) => i.id == itemId);
     if (item.type == GuideItemType.line ||
         item.type == GuideItemType.cls ||
-        item.type == GuideItemType.clss) {
+        (item.type == GuideItemType.clss && item.fileName != 'clss@custom.svg')) {
       _showColorEditDialog(item);
+    } else if (item.type == GuideItemType.clss &&
+        item.fileName == 'clss@custom.svg') {
+      _showCustomLineDialog(item: item);
     } else if (item.type == GuideItemType.text ||
         item.fileName.contains('text')) {
       _showTextEditDialog(item);
@@ -525,6 +572,151 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                 Navigator.pop(context);
               },
               child: const Text('添加'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCustomLineDialog({MetroGuideItem? item}) {
+    final codeController = TextEditingController(text: item?.customText?.cn ?? '');
+    final nameController = TextEditingController(text: item?.customText?.en ?? '');
+    String selectedColor = item?.customColor ?? '#E4002B';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: AppTheme.darkBgSecondary,
+          title: Text(
+            item == null ? '添加自定义线路' : '编辑自定义线路',
+            style: const TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: codeController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: '线路编号',
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppTheme.darkBorder),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppTheme.primaryColor),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: nameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: '线路名称',
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppTheme.darkBorder),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppTheme.primaryColor),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  '#E4002B',
+                  '#A09A39',
+                  '#FAC000',
+                  '#008C44',
+                  '#823130',
+                  '#AA7F3E',
+                  '#E60085',
+                  '#00A1DE',
+                  '#8FC2E3',
+                  '#98C5A3',
+                  '#DA81A6',
+                  '#7D8B2F',
+                ].map((color) {
+                  final isSelected = selectedColor == color;
+                  return InkWell(
+                    onTap: () => setDialogState(() => selectedColor = color),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: _parseColor(color),
+                        shape: BoxShape.circle,
+                        border: isSelected
+                            ? Border.all(color: Colors.white, width: 2)
+                            : null,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final customLine = MetroGuideItem(
+                  id: item?.id,
+                  fileName: 'clss@custom.svg',
+                  type: GuideItemType.clss,
+                  customColor: selectedColor,
+                  customText: CustomText(
+                    cn: codeController.text.trim(),
+                    en: nameController.text.trim(),
+                  ),
+                );
+
+                if (item == null) {
+                  setState(() {
+                    _customAssets = [..._customAssets, customLine];
+                    _items = [..._items, customLine];
+                    _hasUnsavedChanges = true;
+                  });
+                } else {
+                  final itemIndex = _items.indexWhere((entry) => entry.id == item.id);
+                  final assetIndex = _customAssets.indexWhere(
+                    (entry) => entry.id == item.id,
+                  );
+                  setState(() {
+                    if (itemIndex != -1) {
+                      final newItems = List<MetroGuideItem>.from(_items);
+                      newItems[itemIndex] = customLine;
+                      _items = newItems;
+                    }
+                    if (assetIndex != -1) {
+                      final newAssets = List<MetroGuideItem>.from(_customAssets);
+                      newAssets[assetIndex] = customLine;
+                      _customAssets = newAssets;
+                    }
+                    _hasUnsavedChanges = true;
+                  });
+                }
+
+                Navigator.pop(context);
+              },
+              child: Text(item == null ? '添加' : '保存'),
             ),
           ],
         ),
@@ -873,6 +1065,16 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
             onEditItem: _onEditItem,
             onAddText: _onAddText,
             onAddColorBand: _onAddColorBand,
+            onAddCustomLine: _onAddCustomLine,
+            onImportSvg: _onImportSvg,
+            customItems: {
+              GuideItemType.oth: _customAssets
+                  .where((item) => item.type == GuideItemType.oth)
+                  .toList(),
+              GuideItemType.clss: _customAssets
+                  .where((item) => item.type == GuideItemType.clss)
+                  .toList(),
+            },
           ),
           Expanded(
             child: Container(

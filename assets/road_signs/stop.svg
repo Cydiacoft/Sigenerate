@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <polygon points="70,12 130,12 188,70 188,130 130,188 70,188 12,130 12,70" fill="#D92323"/>
+  <polygon points="76,24 124,24 176,76 176,124 124,176 76,176 24,124 24,76" fill="#D92323" stroke="#FFFFFF" stroke-width="8"/>
+  <text x="100" y="118" text-anchor="middle" font-size="72" font-weight="700" fill="#FFFFFF" font-family="Noto Sans SC, Microsoft YaHei, sans-serif">停</text>
+</svg>

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -6,11 +8,6 @@ import '../theme/app_theme.dart';
 import '../utils/metro_guide_svg_utils.dart';
 
 class MetroGuideItemWidget extends StatelessWidget {
-  final MetroGuideItem item;
-  final bool isActive;
-  final VoidCallback onTap;
-  final bool isDragging;
-
   const MetroGuideItemWidget({
     super.key,
     required this.item,
@@ -18,6 +15,11 @@ class MetroGuideItemWidget extends StatelessWidget {
     required this.onTap,
     this.isDragging = false,
   });
+
+  final MetroGuideItem item;
+  final bool isActive;
+  final VoidCallback onTap;
+  final bool isDragging;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +44,23 @@ class MetroGuideItemWidget extends StatelessWidget {
       return _buildTextItem();
     }
 
+    if (item.type == GuideItemType.clss && item.fileName == 'clss@custom.svg') {
+      return _buildCustomLineItem();
+    }
+
     if (item.type == GuideItemType.sub &&
-        (item.fileName == 'sub@exit.svg' || item.fileName == 'sub@text.svg')) {
+        (item.fileName == 'sub@exit.svg' ||
+            item.fileName == 'sub@text.svg' ||
+            item.fileName == 'sub@custom.svg')) {
       return _buildCustomSubItem();
+    }
+
+    if (item.customSvgContent != null) {
+      return SvgPicture.string(item.customSvgContent!, fit: BoxFit.contain);
+    }
+
+    if (item.customUrl != null && item.customUrl!.toLowerCase().endsWith('.svg')) {
+      return SvgPicture.file(File(item.customUrl!), fit: BoxFit.contain);
     }
 
     if (item.customColor != null) {
@@ -124,6 +140,61 @@ class MetroGuideItemWidget extends StatelessWidget {
               width: double.infinity,
               color: _parseColor(item.colorBandColor ?? '#001D31'),
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomLineItem() {
+    final lineCode = item.customText?.cn.trim().isNotEmpty == true
+        ? item.customText!.cn.trim()
+        : 'XX';
+    final lineName = item.customText?.en.trim().isNotEmpty == true
+        ? item.customText!.en.trim()
+        : '自定义线路';
+    final lineColor = _parseColor(item.customColor ?? '#E4002B');
+
+    return Container(
+      constraints: const BoxConstraints(minWidth: 120, minHeight: 80),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0E1525),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white, width: 1.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(color: lineColor, shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: Text(
+              lineCode,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            child: Text(
+              lineName,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                height: 1.05,
+              ),
+            ),
+          ),
         ],
       ),
     );
