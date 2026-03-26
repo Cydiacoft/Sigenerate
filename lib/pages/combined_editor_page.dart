@@ -19,17 +19,17 @@ class CombinedEditorPage extends StatefulWidget {
 
 class _CombinedEditorPageState extends State<CombinedEditorPage> {
   EditorMode _editorMode = EditorMode.metro;
-  
+
   String? _currentFilePath;
   String _projectName = '新项目';
   bool _hasUnsavedChanges = false;
-  
+
   MetroCityStyle _selectedCity = MetroCityStyle.shanghai;
   MetroCityConfig _cityConfig = MetroCityConfig.shanghai;
   MetroTemplate? _selectedMetroTemplate;
   Map<String, dynamic> _metroSlotValues = {};
   String? _selectedMetroSlotId;
-  
+
   TemplateLayout? _selectedRoadTemplate;
   Map<String, String> _roadSlotValues = {};
   String? _selectedRoadSlotId;
@@ -38,14 +38,18 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
   @override
   void initState() {
     super.initState();
-    _selectedMetroTemplate = MetroTemplatePresets.getByCity(_selectedCity).first;
+    _selectedMetroTemplate = MetroTemplatePresets.getByCity(
+      _selectedCity,
+    ).first;
     _initMetroSlotValues();
   }
 
   void _initMetroSlotValues() {
     _metroSlotValues = {};
     for (final slot in _selectedMetroTemplate?.slots ?? []) {
-      _metroSlotValues[slot.id] = slot.type == 'line_badge' ? MetroLine.shanghaiLines.first : '';
+      _metroSlotValues[slot.id] = slot.type == 'line_badge'
+          ? MetroLine.shanghaiLines.first
+          : '';
     }
   }
 
@@ -80,8 +84,8 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
           const Divider(height: 1, color: AppTheme.darkBorder),
           Expanded(
             child: _editorMode == EditorMode.metro
-              ? _buildMetroTemplateList()
-              : _buildRoadTemplateList(),
+                ? _buildMetroTemplateList()
+                : _buildRoadTemplateList(),
           ),
         ],
       ),
@@ -106,19 +110,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
           Row(
             children: [
               Expanded(
-                child: _buildModeTab(
-                  '轨道交通',
-                  Icons.train,
-                  EditorMode.metro,
-                ),
+                child: _buildModeTab('轨道交通', Icons.train, EditorMode.metro),
               ),
               const SizedBox(width: 4),
               Expanded(
-                child: _buildModeTab(
-                  '道路路牌',
-                  Icons.signpost,
-                  EditorMode.road,
-                ),
+                child: _buildModeTab('道路路牌', Icons.signpost, EditorMode.road),
               ),
             ],
           ),
@@ -133,7 +129,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
       onTap: () => setState(() {
         _editorMode = mode;
         if (mode == EditorMode.metro) {
-          _selectedMetroTemplate = MetroTemplatePresets.getByCity(_selectedCity).first;
+          _selectedMetroTemplate = MetroTemplatePresets.getByCity(
+            _selectedCity,
+          ).first;
           _initMetroSlotValues();
         } else if (_selectedRoadTemplate == null) {
           _selectedRoadTemplate = TemplatePresets.all.first;
@@ -152,7 +150,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 20, color: isSelected ? Colors.white : AppTheme.textSecondaryDark),
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? Colors.white : AppTheme.textSecondaryDark,
+            ),
             const SizedBox(height: 4),
             Text(
               label,
@@ -191,7 +193,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
           ),
         ),
         const SizedBox(height: 8),
-        ...MetroTemplatePresets.getByCity(_selectedCity).map((t) => _buildMetroTemplateItem(t)),
+        ...MetroTemplatePresets.getByCity(
+          _selectedCity,
+        ).map((t) => _buildMetroTemplateItem(t)),
       ],
     );
   }
@@ -207,7 +211,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
             setState(() {
               _selectedCity = city.style;
               _cityConfig = city;
-              _selectedMetroTemplate = MetroTemplatePresets.getByCity(_selectedCity).first;
+              _selectedMetroTemplate = MetroTemplatePresets.getByCity(
+                _selectedCity,
+              ).first;
               _initMetroSlotValues();
             });
           },
@@ -249,19 +255,23 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
               width: isSelected ? 2 : 1,
             ),
-            boxShadow: isSelected ? [
-              BoxShadow(
-                color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ] : null,
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             children: [
@@ -296,7 +306,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                       template.name,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? AppTheme.primaryColor : AppTheme.textPrimaryDark,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : AppTheme.textPrimaryDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -311,7 +323,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                 ),
               ),
               if (isSelected)
-                const Icon(Icons.check_circle, size: 16, color: AppTheme.primaryColor),
+                const Icon(
+                  Icons.check_circle,
+                  size: 16,
+                  color: AppTheme.primaryColor,
+                ),
             ],
           ),
         ),
@@ -363,19 +379,23 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
               width: isSelected ? 2 : 1,
             ),
-            boxShadow: isSelected ? [
-              BoxShadow(
-                color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ] : null,
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             children: [
@@ -406,7 +426,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                       template.name,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? AppTheme.primaryColor : AppTheme.textPrimaryDark,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : AppTheme.textPrimaryDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -421,7 +443,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                 ),
               ),
               if (isSelected)
-                const Icon(Icons.check_circle, size: 16, color: AppTheme.primaryColor),
+                const Icon(
+                  Icons.check_circle,
+                  size: 16,
+                  color: AppTheme.primaryColor,
+                ),
             ],
           ),
         ),
@@ -469,7 +495,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.folder_open, size: 16, color: Colors.white70),
+                  const Icon(
+                    Icons.folder_open,
+                    size: 16,
+                    color: Colors.white70,
+                  ),
                   const SizedBox(width: 8),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 150),
@@ -484,7 +514,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_drop_down, size: 16, color: Colors.white70),
+                  const Icon(
+                    Icons.arrow_drop_down,
+                    size: 16,
+                    color: Colors.white70,
+                  ),
                 ],
               ),
             ),
@@ -572,7 +606,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
               ),
               child: Text(
                 _cityConfig.name,
-                style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             )
           else if (_selectedRoadTemplate != null)
@@ -584,7 +622,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
               ),
               child: Text(
                 _selectedRoadTemplate!.name,
-                style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           const Spacer(),
@@ -610,7 +652,8 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return GestureDetector(
-              onTapDown: (details) => _handleCanvasTap(details.localPosition, constraints.biggest),
+              onTapDown: (details) =>
+                  _handleCanvasTap(details.localPosition, constraints.biggest),
               child: _buildCanvasContent(constraints.biggest),
             );
           },
@@ -630,7 +673,8 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
           selectedSlotId: _selectedMetroSlotId,
         ),
       );
-    } else if (_editorMode == EditorMode.road && _selectedRoadTemplate != null) {
+    } else if (_editorMode == EditorMode.road &&
+        _selectedRoadTemplate != null) {
       return CustomPaint(
         size: size,
         painter: TemplatePainter(
@@ -648,7 +692,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
 
   void _handleCanvasTap(Offset position, Size containerSize) {
     if (_editorMode == EditorMode.metro && _selectedMetroTemplate != null) {
-      final canvasPos = _screenToCanvas(position, containerSize, _selectedMetroTemplate!.canvasSize);
+      final canvasPos = _screenToCanvas(
+        position,
+        containerSize,
+        _selectedMetroTemplate!.canvasSize,
+      );
       String? hitSlotId;
       for (final slot in _selectedMetroTemplate!.slots) {
         if (slot.editable && _isPointInSlot(canvasPos, slot)) {
@@ -657,8 +705,13 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         }
       }
       setState(() => _selectedMetroSlotId = hitSlotId);
-    } else if (_editorMode == EditorMode.road && _selectedRoadTemplate != null) {
-      final canvasPos = _screenToCanvas(position, containerSize, _selectedRoadTemplate!.canvasSize);
+    } else if (_editorMode == EditorMode.road &&
+        _selectedRoadTemplate != null) {
+      final canvasPos = _screenToCanvas(
+        position,
+        containerSize,
+        _selectedRoadTemplate!.canvasSize,
+      );
       String? hitSlotId;
       for (final slot in _selectedRoadTemplate!.slots) {
         if (slot.editable && _isPointInTemplateSlot(canvasPos, slot)) {
@@ -670,7 +723,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
     }
   }
 
-  Offset _screenToCanvas(Offset screenPos, Size containerSize, Size canvasSize) {
+  Offset _screenToCanvas(
+    Offset screenPos,
+    Size containerSize,
+    Size canvasSize,
+  ) {
     final scaleX = containerSize.width / canvasSize.width;
     final scaleY = containerSize.height / canvasSize.height;
     final scale = scaleX < scaleY ? scaleX : scaleY;
@@ -710,7 +767,10 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
             Expanded(
               child: Text(
                 _currentFilePath!,
-                style: const TextStyle(fontSize: 11, color: AppTheme.textSecondaryDark),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppTheme.textSecondaryDark,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             )
@@ -718,18 +778,27 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
             const Expanded(
               child: Text(
                 '新建项目 - 点击左上角菜单保存',
-                style: TextStyle(fontSize: 11, color: AppTheme.textSecondaryDark),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppTheme.textSecondaryDark,
+                ),
               ),
             ),
           if (_editorMode == EditorMode.metro && _selectedMetroTemplate != null)
             Text(
               '${_selectedMetroTemplate!.name} ${_selectedMetroTemplate!.canvasSize.width.toInt()}x${_selectedMetroTemplate!.canvasSize.height.toInt()}',
-              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondaryDark),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppTheme.textSecondaryDark,
+              ),
             ),
           if (_editorMode == EditorMode.road && _selectedRoadTemplate != null)
             Text(
               '${_selectedRoadTemplate!.name} ${_selectedRoadTemplate!.canvasSize.width.toInt()}x${_selectedRoadTemplate!.canvasSize.height.toInt()}',
-              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondaryDark),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppTheme.textSecondaryDark,
+              ),
             ),
           if (_hasUnsavedChanges) ...[
             const SizedBox(width: 12),
@@ -759,8 +828,8 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
           _buildPropertyHeader('编辑内容'),
           Expanded(
             child: _editorMode == EditorMode.metro
-              ? _buildMetroEditPanel()
-              : _buildRoadEditPanel(),
+                ? _buildMetroEditPanel()
+                : _buildRoadEditPanel(),
           ),
         ],
       ),
@@ -778,7 +847,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryDark),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textPrimaryDark,
+            ),
           ),
         ],
       ),
@@ -788,7 +861,10 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
   Widget _buildMetroEditPanel() {
     if (_selectedMetroTemplate == null) {
       return const Center(
-        child: Text('请选择模板', style: TextStyle(color: AppTheme.textSecondaryDark)),
+        child: Text(
+          '请选择模板',
+          style: TextStyle(color: AppTheme.textSecondaryDark),
+        ),
       );
     }
 
@@ -813,7 +889,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
       children: [
         const Text(
           '城市风格',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primaryColor,
+          ),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -826,21 +906,28 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                 setState(() {
                   _selectedCity = city.style;
                   _cityConfig = city;
-                  _selectedMetroTemplate = MetroTemplatePresets.getByCity(_selectedCity).firstWhere(
-                    (t) => t.id == _selectedMetroTemplate?.id,
-                    orElse: () => MetroTemplatePresets.getByCity(_selectedCity).first,
-                  );
+                  _selectedMetroTemplate =
+                      MetroTemplatePresets.getByCity(_selectedCity).firstWhere(
+                        (t) => t.id == _selectedMetroTemplate?.id,
+                        orElse: () =>
+                            MetroTemplatePresets.getByCity(_selectedCity).first,
+                      );
                   _initMetroSlotValues();
                 });
               },
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? city.defaultBgColor : AppTheme.darkBg,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
+                    color: isSelected
+                        ? AppTheme.primaryColor
+                        : AppTheme.darkBorder,
                   ),
                 ),
                 child: Text(
@@ -860,7 +947,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
 
   Widget _buildMetroSlotEditor(MetroSlot slot) {
     final isSelected = _selectedMetroSlotId == slot.id;
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -869,7 +956,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
@@ -891,13 +980,19 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                       slot.label,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : AppTheme.textSecondaryDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                   if (isSelected)
-                    const Icon(Icons.edit, size: 14, color: AppTheme.primaryColor),
+                    const Icon(
+                      Icons.edit,
+                      size: 14,
+                      color: AppTheme.primaryColor,
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -932,12 +1027,14 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
   Widget _buildLineSelector(MetroSlot slot) {
     final lines = MetroLine.getLines(_selectedCity);
     final selectedLine = _metroSlotValues[slot.id] as MetroLine?;
-    
+
     return Wrap(
       spacing: 6,
       runSpacing: 6,
       children: lines.take(10).map((line) {
-        final isSelected = selectedLine?.number == line.number && selectedLine?.city == line.city;
+        final isSelected =
+            selectedLine?.number == line.number &&
+            selectedLine?.city == line.city;
         return InkWell(
           onTap: () {
             setState(() {
@@ -950,7 +1047,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
             decoration: BoxDecoration(
               color: line.lineColor,
               borderRadius: BorderRadius.circular(20),
-              border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
+              border: isSelected
+                  ? Border.all(color: Colors.white, width: 2)
+                  : null,
             ),
             child: Center(
               child: Text(
@@ -972,7 +1071,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
     final directions = ['up', 'down', 'left', 'right'];
     final labels = ['↑', '↓', '←', '→'];
     final currentDir = slot.arrowDirection ?? 'right';
-    
+
     return Row(
       children: List.generate(4, (i) {
         final isSelected = currentDir == directions[i];
@@ -988,10 +1087,14 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primaryColor : AppTheme.darkBgSecondary,
+                color: isSelected
+                    ? AppTheme.primaryColor
+                    : AppTheme.darkBgSecondary,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
+                  color: isSelected
+                      ? AppTheme.primaryColor
+                      : AppTheme.darkBorder,
                 ),
               ),
               child: Center(
@@ -1017,7 +1120,10 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         hintText: '输入${slot.label}...',
         hintStyle: const TextStyle(color: AppTheme.textSecondaryDark),
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
@@ -1025,7 +1131,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         filled: true,
         fillColor: AppTheme.darkBgSecondary,
       ),
-      controller: TextEditingController(text: _metroSlotValues[slot.id]?.toString() ?? ''),
+      controller: TextEditingController(
+        text: _metroSlotValues[slot.id]?.toString() ?? '',
+      ),
       onChanged: (v) {
         setState(() {
           _metroSlotValues[slot.id] = v;
@@ -1037,7 +1145,10 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
   Widget _buildRoadEditPanel() {
     if (_selectedRoadTemplate == null) {
       return const Center(
-        child: Text('请选择模板', style: TextStyle(color: AppTheme.textSecondaryDark)),
+        child: Text(
+          '请选择模板',
+          style: TextStyle(color: AppTheme.textSecondaryDark),
+        ),
       );
     }
 
@@ -1062,7 +1173,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
       children: [
         const Text(
           '背景配色',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primaryColor,
+          ),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -1091,11 +1206,17 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(8),
-          border: isSelected ? Border.all(color: AppTheme.accentColor, width: 2) : null,
+          border: isSelected
+              ? Border.all(color: AppTheme.accentColor, width: 2)
+              : null,
         ),
         child: Text(
           name,
-          style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 10,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -1104,7 +1225,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
 
   Widget _buildRoadSlotEditor(TemplateSlot slot) {
     final isSelected = _selectedRoadSlotId == slot.id;
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -1113,7 +1234,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
@@ -1129,23 +1252,35 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                       slot.label,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : AppTheme.textSecondaryDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                   if (isSelected)
-                    const Icon(Icons.edit, size: 14, color: AppTheme.primaryColor),
+                    const Icon(
+                      Icons.edit,
+                      size: 14,
+                      color: AppTheme.primaryColor,
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
               TextField(
-                style: const TextStyle(fontSize: 14, color: AppTheme.textPrimaryDark),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.textPrimaryDark,
+                ),
                 decoration: InputDecoration(
                   hintText: '输入${slot.label}...',
                   hintStyle: const TextStyle(color: AppTheme.textSecondaryDark),
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -1153,7 +1288,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
                   filled: true,
                   fillColor: AppTheme.darkBgSecondary,
                 ),
-                controller: TextEditingController(text: _roadSlotValues[slot.id] ?? ''),
+                controller: TextEditingController(
+                  text: _roadSlotValues[slot.id] ?? '',
+                ),
                 onChanged: (v) {
                   setState(() {
                     _roadSlotValues[slot.id] = v;
@@ -1168,9 +1305,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
   }
 
   void _exportImage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('导出功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('导出功能开发中...')));
   }
 
   void _newProject() {
@@ -1196,7 +1333,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
       _editorMode = EditorMode.metro;
       _selectedCity = MetroCityStyle.shanghai;
       _cityConfig = MetroCityConfig.shanghai;
-      _selectedMetroTemplate = MetroTemplatePresets.getByCity(_selectedCity).first;
+      _selectedMetroTemplate = MetroTemplatePresets.getByCity(
+        _selectedCity,
+      ).first;
       _metroSlotValues = {};
       _selectedMetroSlotId = null;
       _selectedRoadTemplate = null;
@@ -1248,13 +1387,13 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         final file = File(result.files.single.path!);
         final content = await file.readAsString();
         final json = jsonDecode(content) as Map<String, dynamic>;
-        
+
         setState(() {
           _projectName = json['name'] as String? ?? '新项目';
           _currentFilePath = file.path;
           _hasUnsavedChanges = false;
         });
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -1268,10 +1407,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('打开文件失败: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('打开文件失败: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -1281,7 +1417,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
   Future<bool> _saveProject() async {
     try {
       String? filePath = _currentFilePath;
-      
+
       if (filePath == null) {
         final result = await FilePicker.platform.saveFile(
           dialogTitle: '保存项目',
@@ -1289,11 +1425,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
           allowedExtensions: ['ved'],
           type: FileType.custom,
         );
-        
+
         if (result == null) return false;
         filePath = result.endsWith('.ved') ? result : '$result.ved';
       }
-      
+
       final json = {
         'name': _projectName,
         'version': '1.0.0',
@@ -1303,18 +1439,20 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         'metroSlotValues': _metroSlotValues,
         'roadTemplateId': _selectedRoadTemplate?.name ?? '',
         'roadSlotValues': _roadSlotValues,
-        'roadBackgroundColor': '#${_roadBackgroundColor.value.toRadixString(16).padLeft(8, '0').substring(2)}',
+        'roadBackgroundColor': _colorToHex(_roadBackgroundColor),
         'savedAt': DateTime.now().toIso8601String(),
       };
-      
+
       final file = File(filePath);
-      await file.writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-      
+      await file.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(json),
+      );
+
       setState(() {
         _currentFilePath = filePath;
         _hasUnsavedChanges = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1327,10 +1465,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('保存失败: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
         );
       }
       return false;
@@ -1345,11 +1480,11 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         allowedExtensions: ['ved'],
         type: FileType.custom,
       );
-      
+
       if (result == null) return false;
-      
+
       String filePath = result.endsWith('.ved') ? result : '$result.ved';
-      
+
       final json = {
         'name': _projectName,
         'version': '1.0.0',
@@ -1359,18 +1494,20 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
         'metroSlotValues': _metroSlotValues,
         'roadTemplateId': _selectedRoadTemplate?.name ?? '',
         'roadSlotValues': _roadSlotValues,
-        'roadBackgroundColor': '#${_roadBackgroundColor.value.toRadixString(16).padLeft(8, '0').substring(2)}',
+        'roadBackgroundColor': _colorToHex(_roadBackgroundColor),
         'savedAt': DateTime.now().toIso8601String(),
       };
-      
+
       final file = File(filePath);
-      await file.writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-      
+      await file.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(json),
+      );
+
       setState(() {
         _currentFilePath = filePath;
         _hasUnsavedChanges = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1383,10 +1520,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('另存失败: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('另存失败: $e'), backgroundColor: Colors.red),
         );
       }
       return false;
@@ -1395,7 +1529,7 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
 
   void _showProjectSettings() {
     final nameController = TextEditingController(text: _projectName);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1409,7 +1543,9 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: '项目名称',
-                labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                labelStyle: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -1443,19 +1579,8 @@ class _CombinedEditorPageState extends State<CombinedEditorPage> {
     );
   }
 
-  void _markAsChanged() {
-    if (!_hasUnsavedChanges) {
-      setState(() {
-        _hasUnsavedChanges = true;
-      });
-    }
-  }
-
-  void _markMetroSlotChanged() {
-    _markAsChanged();
-  }
-
-  void _markRoadSlotChanged() {
-    _markAsChanged();
+  String _colorToHex(Color color) {
+    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
+    return '#${argb.substring(2)}';
   }
 }

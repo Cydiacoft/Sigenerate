@@ -13,7 +13,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final IntersectionScene _scene = IntersectionScene();
   TrafficSign? _selectedSign;
@@ -97,7 +98,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 const SizedBox(width: 8),
                 Text(
                   '路口预览 - ${_scene.name.isEmpty ? "未命名路口" : _scene.name}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -126,7 +130,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               children: [
                 Icon(Icons.edit, color: Color(0xFF4A90A4)),
                 SizedBox(width: 8),
-                Text('路口配置', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  '路口配置',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -203,9 +210,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildDirectionCard(String direction, String label, String abbr, IconData icon) {
+  Widget _buildDirectionCard(
+    String direction,
+    String label,
+    String abbr,
+    IconData icon,
+  ) {
     final info = _getDirectionInfo(direction);
-    
+
     return RepaintBoundary(
       key: _getDirectionKey(direction),
       child: Card(
@@ -243,7 +255,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 decoration: InputDecoration(
                   isDense: true,
                   labelText: '道路名称',
-                  labelStyle: TextStyle(color: _scene.foregroundColor.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(
+                    color: _scene.foregroundColor.withValues(alpha: 0.7),
+                  ),
                   border: const OutlineInputBorder(),
                   filled: true,
                   fillColor: _scene.backgroundColor.withValues(alpha: 0.5),
@@ -261,7 +275,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 decoration: InputDecoration(
                   isDense: true,
                   labelText: '通往地点',
-                  labelStyle: TextStyle(color: _scene.foregroundColor.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(
+                    color: _scene.foregroundColor.withValues(alpha: 0.7),
+                  ),
                   border: const OutlineInputBorder(),
                   filled: true,
                   fillColor: _scene.backgroundColor.withValues(alpha: 0.5),
@@ -278,14 +294,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<RoadType>(
-                      value: info.roadType,
+                      initialValue: info.roadType,
                       decoration: InputDecoration(
                         isDense: true,
                         labelText: '道路类型',
-                        labelStyle: TextStyle(color: _scene.foregroundColor.withValues(alpha: 0.7)),
+                        labelStyle: TextStyle(
+                          color: _scene.foregroundColor.withValues(alpha: 0.7),
+                        ),
                         border: const OutlineInputBorder(),
                         filled: true,
-                        fillColor: _scene.backgroundColor.withValues(alpha: 0.5),
+                        fillColor: _scene.backgroundColor.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                       dropdownColor: _scene.backgroundColor,
                       style: TextStyle(color: _scene.foregroundColor),
@@ -384,7 +404,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Widget _buildSignTile(TrafficSign sign) {
     final isSelected = _selectedSign?.id == sign.id;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -488,7 +508,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildColorSetting(String label, Color color, Function(Color) onColorChanged) {
+  Widget _buildColorSetting(
+    String label,
+    Color color,
+    Function(Color) onColorChanged,
+  ) {
     return Card(
       child: ListTile(
         title: Text(label),
@@ -496,10 +520,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           onTap: () async {
             final newColor = await showDialog<Color>(
               context: context,
-              builder: (context) => ColorPickerDialog(
-                initialColor: color,
-                title: label,
-              ),
+              builder: (context) =>
+                  ColorPickerDialog(initialColor: color, title: label),
             );
             if (newColor != null) {
               onColorChanged(newColor);
@@ -561,9 +583,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _exportAllSigns() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('正在导出...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('正在导出...')));
 
     final paths = await ExportUtils.exportAllSigns(
       _northKey,
@@ -578,18 +600,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('已导出 ${paths.length} 个文件到文档目录'),
-            action: SnackBarAction(
-              label: '确定',
-              onPressed: () {},
-            ),
+            action: SnackBarAction(label: '确定', onPressed: () {}),
           ),
         );
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('导出失败')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('导出失败')));
       }
     }
   }

@@ -14,12 +14,12 @@ class DesignerPage extends StatefulWidget {
 
 class _DesignerPageState extends State<DesignerPage> {
   EditMode _editMode = EditMode.template;
-  
+
   TemplateLayout? _selectedTemplate;
   Map<String, String> _slotValues = {};
   String? _selectedSlotId;
-  
-  List<DesignElement> _elements = [];
+
+  final List<DesignElement> _elements = [];
   DesignElement? _selectedElement;
   Color _backgroundColor = const Color(0xFF059669);
   Size _canvasSize = const Size(600, 200);
@@ -83,17 +83,9 @@ class _DesignerPageState extends State<DesignerPage> {
       ),
       child: Column(
         children: [
-          _buildModeButton(
-            Icons.dashboard_customize,
-            '模板',
-            EditMode.template,
-          ),
+          _buildModeButton(Icons.dashboard_customize, '模板', EditMode.template),
           const SizedBox(height: 4),
-          _buildModeButton(
-            Icons.edit,
-            '自由',
-            EditMode.free,
-          ),
+          _buildModeButton(Icons.edit, '自由', EditMode.free),
         ],
       ),
     );
@@ -114,20 +106,30 @@ class _DesignerPageState extends State<DesignerPage> {
         width: 56,
         height: 48,
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : Colors.transparent,
+          color: isSelected
+              ? AppTheme.primaryColor.withValues(alpha: 0.2)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isSelected ? Border.all(color: AppTheme.primaryColor) : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark),
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected
+                  ? AppTheme.primaryColor
+                  : AppTheme.textSecondaryDark,
+            ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
                 fontSize: 9,
-                color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark,
+                color: isSelected
+                    ? AppTheme.primaryColor
+                    : AppTheme.textSecondaryDark,
               ),
             ),
           ],
@@ -140,7 +142,9 @@ class _DesignerPageState extends State<DesignerPage> {
     return Expanded(
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        children: TemplatePresets.all.map((t) => _buildTemplateItem(t)).toList(),
+        children: TemplatePresets.all
+            .map((t) => _buildTemplateItem(t))
+            .toList(),
       ),
     );
   }
@@ -162,7 +166,9 @@ class _DesignerPageState extends State<DesignerPage> {
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
@@ -190,7 +196,9 @@ class _DesignerPageState extends State<DesignerPage> {
                 template.name,
                 style: TextStyle(
                   fontSize: 8,
-                  color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark,
+                  color: isSelected
+                      ? AppTheme.primaryColor
+                      : AppTheme.textSecondaryDark,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -231,7 +239,10 @@ class _DesignerPageState extends State<DesignerPage> {
               const SizedBox(height: 2),
               Text(
                 tool.label,
-                style: const TextStyle(fontSize: 9, color: AppTheme.textSecondaryDark),
+                style: const TextStyle(
+                  fontSize: 9,
+                  color: AppTheme.textSecondaryDark,
+                ),
               ),
             ],
           ),
@@ -265,7 +276,11 @@ class _DesignerPageState extends State<DesignerPage> {
         children: [
           const Text(
             '导视图设计器',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryDark),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textPrimaryDark,
+            ),
           ),
           const SizedBox(width: 32),
           if (_editMode == EditMode.template && _selectedTemplate != null) ...[
@@ -277,22 +292,40 @@ class _DesignerPageState extends State<DesignerPage> {
               ),
               child: Text(
                 _selectedTemplate!.name,
-                style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             const SizedBox(width: 16),
-            _buildColorButton('背景', _backgroundColor, (c) => setState(() => _backgroundColor = c)),
+            _buildColorButton(
+              '背景',
+              _backgroundColor,
+              (c) => setState(() => _backgroundColor = c),
+            ),
           ] else ...[
             _buildDropdown<Size>(
               value: _canvasSize,
-              items: CanvasPreset.presets.map((p) => DropdownMenuItem(
-                value: p.size,
-                child: Text('${p.name} (${p.size.width.toInt()}x${p.size.height.toInt()})'),
-              )).toList(),
+              items: CanvasPreset.presets
+                  .map(
+                    (p) => DropdownMenuItem(
+                      value: p.size,
+                      child: Text(
+                        '${p.name} (${p.size.width.toInt()}x${p.size.height.toInt()})',
+                      ),
+                    ),
+                  )
+                  .toList(),
               onChanged: (v) => setState(() => _canvasSize = v!),
             ),
             const SizedBox(width: 16),
-            _buildColorButton('背景', _backgroundColor, (c) => setState(() => _backgroundColor = c)),
+            _buildColorButton(
+              '背景',
+              _backgroundColor,
+              (c) => setState(() => _backgroundColor = c),
+            ),
             const SizedBox(width: 16),
             ToggleButtons(
               isSelected: [_showGrid],
@@ -307,7 +340,9 @@ class _DesignerPageState extends State<DesignerPage> {
             onPressed: () => setState(() => _showSlotLabels = !_showSlotLabels),
             icon: Icon(
               _showSlotLabels ? Icons.label : Icons.label_off,
-              color: _showSlotLabels ? AppTheme.accentColor : AppTheme.textSecondaryDark,
+              color: _showSlotLabels
+                  ? AppTheme.accentColor
+                  : AppTheme.textSecondaryDark,
             ),
             tooltip: '显示标签',
           ),
@@ -341,35 +376,55 @@ class _DesignerPageState extends State<DesignerPage> {
         underline: const SizedBox(),
         dropdownColor: AppTheme.darkBgSecondary,
         style: const TextStyle(fontSize: 13, color: AppTheme.textPrimaryDark),
-        icon: const Icon(Icons.expand_more, size: 18, color: AppTheme.textSecondaryDark),
+        icon: const Icon(
+          Icons.expand_more,
+          size: 18,
+          color: AppTheme.textSecondaryDark,
+        ),
       ),
     );
   }
 
-  Widget _buildColorButton(String label, Color color, ValueChanged<Color> onChanged) {
+  Widget _buildColorButton(
+    String label,
+    Color color,
+    ValueChanged<Color> onChanged,
+  ) {
     final colors = [
-      const Color(0xFF059669), const Color(0xFF1D4ED8), const Color(0xFF0284C7),
-      const Color(0xFF92400E), const Color(0xFF1F2937), const Color(0xFFDC2626),
-      const Color(0xFF7C3AED), const Color(0xFFF59E0B), const Color(0xFF111827),
+      const Color(0xFF059669),
+      const Color(0xFF1D4ED8),
+      const Color(0xFF0284C7),
+      const Color(0xFF92400E),
+      const Color(0xFF1F2937),
+      const Color(0xFFDC2626),
+      const Color(0xFF7C3AED),
+      const Color(0xFFF59E0B),
+      const Color(0xFF111827),
     ];
-    
+
     return PopupMenuButton<Color>(
       onSelected: onChanged,
       offset: const Offset(0, 40),
       color: AppTheme.darkBgSecondary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      itemBuilder: (ctx) => colors.map((c) => PopupMenuItem(
-        value: c,
-        child: Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: c,
-            borderRadius: BorderRadius.circular(6),
-            border: c == color ? Border.all(color: Colors.white, width: 2) : null,
-          ),
-        ),
-      )).toList(),
+      itemBuilder: (ctx) => colors
+          .map(
+            (c) => PopupMenuItem(
+              value: c,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: c,
+                  borderRadius: BorderRadius.circular(6),
+                  border: c == color
+                      ? Border.all(color: Colors.white, width: 2)
+                      : null,
+                ),
+              ),
+            ),
+          )
+          .toList(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -390,7 +445,13 @@ class _DesignerPageState extends State<DesignerPage> {
               ),
             ),
             const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.textPrimaryDark)),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppTheme.textPrimaryDark,
+              ),
+            ),
           ],
         ),
       ),
@@ -409,27 +470,28 @@ class _DesignerPageState extends State<DesignerPage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return GestureDetector(
-              onTapDown: (details) => _handleCanvasTap(details.localPosition, constraints.biggest),
+              onTapDown: (details) =>
+                  _handleCanvasTap(details.localPosition, constraints.biggest),
               child: _editMode == EditMode.template && _selectedTemplate != null
-                ? CustomPaint(
-                    size: constraints.biggest,
-                    painter: TemplatePainter(
-                      template: _selectedTemplate!,
-                      slotValues: _slotValues,
-                      backgroundColor: _backgroundColor,
-                      selectedSlotId: _selectedSlotId,
-                      showSlotLabels: _showSlotLabels,
+                  ? CustomPaint(
+                      size: constraints.biggest,
+                      painter: TemplatePainter(
+                        template: _selectedTemplate!,
+                        slotValues: _slotValues,
+                        backgroundColor: _backgroundColor,
+                        selectedSlotId: _selectedSlotId,
+                        showSlotLabels: _showSlotLabels,
+                      ),
+                    )
+                  : CustomPaint(
+                      size: constraints.biggest,
+                      painter: CanvasPainter(
+                        elements: _elements,
+                        backgroundColor: _backgroundColor,
+                        canvasSize: _canvasSize,
+                        showGrid: _showGrid,
+                      ),
                     ),
-                  )
-                : CustomPaint(
-                    size: constraints.biggest,
-                    painter: CanvasPainter(
-                      elements: _elements,
-                      backgroundColor: _backgroundColor,
-                      canvasSize: _canvasSize,
-                      showGrid: _showGrid,
-                    ),
-                  ),
             );
           },
         ),
@@ -441,7 +503,7 @@ class _DesignerPageState extends State<DesignerPage> {
     final scaleX = containerSize.width / _canvasSize.width;
     final scaleY = containerSize.height / _canvasSize.height;
     final scale = scaleX < scaleY ? scaleX : scaleY;
-    
+
     final offsetX = (containerSize.width - _canvasSize.width * scale) / 2;
     final offsetY = (containerSize.height - _canvasSize.height * scale) / 2;
 
@@ -496,25 +558,39 @@ class _DesignerPageState extends State<DesignerPage> {
         children: [
           Text(
             '画布: ${_canvasSize.width.toInt()} x ${_canvasSize.height.toInt()}',
-            style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark),
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textSecondaryDark,
+            ),
           ),
           const SizedBox(width: 24),
           if (_editMode == EditMode.template) ...[
             Text(
               _selectedSlotId != null
-                ? '已选中: ${_getSlotLabel(_selectedSlotId!)}'
-                : '点击编辑区域',
-              style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark),
+                  ? '已选中: ${_getSlotLabel(_selectedSlotId!)}'
+                  : '点击编辑区域',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppTheme.textSecondaryDark,
+              ),
             ),
           ] else ...[
             Text(
               '元素: ${_elements.length}',
-              style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark),
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppTheme.textSecondaryDark,
+              ),
             ),
             const SizedBox(width: 24),
             Text(
-              _selectedElement != null ? '已选中: ${_selectedElement!.type.name}' : '未选中元素',
-              style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark),
+              _selectedElement != null
+                  ? '已选中: ${_selectedElement!.type.name}'
+                  : '未选中元素',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppTheme.textSecondaryDark,
+              ),
             ),
           ],
         ],
@@ -525,7 +601,13 @@ class _DesignerPageState extends State<DesignerPage> {
   String _getSlotLabel(String slotId) {
     final slot = _selectedTemplate?.slots.firstWhere(
       (s) => s.id == slotId,
-      orElse: () => const TemplateSlot(id: '', label: '', type: '', position: Offset.zero, size: Size.zero),
+      orElse: () => const TemplateSlot(
+        id: '',
+        label: '',
+        type: '',
+        position: Offset.zero,
+        size: Size.zero,
+      ),
     );
     return slot?.label ?? '';
   }
@@ -536,11 +618,13 @@ class _DesignerPageState extends State<DesignerPage> {
       color: AppTheme.darkBgSecondary,
       child: Column(
         children: [
-          _buildPropertyHeader(_editMode == EditMode.template ? '模板编辑' : '属性面板'),
+          _buildPropertyHeader(
+            _editMode == EditMode.template ? '模板编辑' : '属性面板',
+          ),
           Expanded(
             child: _editMode == EditMode.template
-              ? _buildTemplateEditPanel()
-              : _buildFreeEditPanel(),
+                ? _buildTemplateEditPanel()
+                : _buildFreeEditPanel(),
           ),
         ],
       ),
@@ -558,7 +642,11 @@ class _DesignerPageState extends State<DesignerPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryDark),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textPrimaryDark,
+            ),
           ),
         ],
       ),
@@ -585,7 +673,11 @@ class _DesignerPageState extends State<DesignerPage> {
       children: [
         const Text(
           '快速配色',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primaryColor,
+          ),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -615,11 +707,17 @@ class _DesignerPageState extends State<DesignerPage> {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(8),
-          border: isSelected ? Border.all(color: AppTheme.accentColor, width: 2) : null,
+          border: isSelected
+              ? Border.all(color: AppTheme.accentColor, width: 2)
+              : null,
         ),
         child: Text(
           name,
-          style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 11,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -629,7 +727,10 @@ class _DesignerPageState extends State<DesignerPage> {
   Widget _buildEditableSlotsSection() {
     if (_selectedTemplate == null) {
       return const Center(
-        child: Text('请选择模板', style: TextStyle(color: AppTheme.textSecondaryDark)),
+        child: Text(
+          '请选择模板',
+          style: TextStyle(color: AppTheme.textSecondaryDark),
+        ),
       );
     }
 
@@ -638,7 +739,11 @@ class _DesignerPageState extends State<DesignerPage> {
       children: [
         const Text(
           '编辑内容',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primaryColor,
+          ),
         ),
         const SizedBox(height: 12),
         ..._selectedTemplate!.slots
@@ -651,7 +756,7 @@ class _DesignerPageState extends State<DesignerPage> {
   Widget _buildSlotEditor(TemplateSlot slot) {
     final isSelected = _selectedSlotId == slot.id;
     final controller = TextEditingController(text: _slotValues[slot.id] ?? '');
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -660,7 +765,9 @@ class _DesignerPageState extends State<DesignerPage> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
@@ -685,24 +792,36 @@ class _DesignerPageState extends State<DesignerPage> {
                       slot.label,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : AppTheme.textSecondaryDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                   if (isSelected)
-                    const Icon(Icons.edit, size: 14, color: AppTheme.primaryColor),
+                    const Icon(
+                      Icons.edit,
+                      size: 14,
+                      color: AppTheme.primaryColor,
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: controller,
-                style: const TextStyle(fontSize: 14, color: AppTheme.textPrimaryDark),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.textPrimaryDark,
+                ),
                 decoration: InputDecoration(
                   hintText: '输入${slot.label}...',
                   hintStyle: const TextStyle(color: AppTheme.textSecondaryDark),
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -730,17 +849,41 @@ class _DesignerPageState extends State<DesignerPage> {
           children: [
             const Text(
               '快捷操作',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.primaryColor,
+              ),
             ),
             const SizedBox(height: 16),
-            _buildQuickAction('添加文字', Icons.text_fields, () => _addElement(ElementType.text)),
-            _buildQuickAction('添加箭头', Icons.arrow_forward, () => _addElement(ElementType.arrow)),
-            _buildQuickAction('添加矩形', Icons.crop_square, () => _addElement(ElementType.rectangle)),
-            _buildQuickAction('添加线条', Icons.horizontal_rule, () => _addElement(ElementType.line)),
+            _buildQuickAction(
+              '添加文字',
+              Icons.text_fields,
+              () => _addElement(ElementType.text),
+            ),
+            _buildQuickAction(
+              '添加箭头',
+              Icons.arrow_forward,
+              () => _addElement(ElementType.arrow),
+            ),
+            _buildQuickAction(
+              '添加矩形',
+              Icons.crop_square,
+              () => _addElement(ElementType.rectangle),
+            ),
+            _buildQuickAction(
+              '添加线条',
+              Icons.horizontal_rule,
+              () => _addElement(ElementType.line),
+            ),
             const SizedBox(height: 24),
             const Text(
               '清空画布',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.primaryColor,
+              ),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -791,7 +934,11 @@ class _DesignerPageState extends State<DesignerPage> {
             if (el.type == ElementType.rectangle)
               _buildPropertyRow('线宽', '${el.strokeWidth.toInt()}'),
             if (el.type == ElementType.rectangle)
-              _buildSwitchRow('填充', el.filled, (v) => setState(() => el.filled = v)),
+              _buildSwitchRow(
+                '填充',
+                el.filled,
+                (v) => setState(() => el.filled = v),
+              ),
           ]),
           const SizedBox(height: 24),
           SizedBox(
@@ -819,7 +966,11 @@ class _DesignerPageState extends State<DesignerPage> {
       children: [
         Text(
           title,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primaryColor,
+          ),
         ),
         const SizedBox(height: 8),
         ...children,
@@ -832,15 +983,31 @@ class _DesignerPageState extends State<DesignerPage> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textSecondaryDark,
+            ),
+          ),
           const Spacer(),
-          Text(value, style: const TextStyle(fontSize: 12, color: AppTheme.textPrimaryDark)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textPrimaryDark,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTextField(String label, String value, ValueChanged<String> onChanged) {
+  Widget _buildTextField(
+    String label,
+    String value,
+    ValueChanged<String> onChanged,
+  ) {
     return TextField(
       controller: TextEditingController(text: value),
       decoration: InputDecoration(
@@ -853,12 +1020,22 @@ class _DesignerPageState extends State<DesignerPage> {
     );
   }
 
-  Widget _buildColorRow(String label, Color color, ValueChanged<Color> onChanged) {
+  Widget _buildColorRow(
+    String label,
+    Color color,
+    ValueChanged<Color> onChanged,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textSecondaryDark,
+            ),
+          ),
           const Spacer(),
           InkWell(
             onTap: () => _showColorPicker(color, onChanged),
@@ -877,12 +1054,22 @@ class _DesignerPageState extends State<DesignerPage> {
     );
   }
 
-  Widget _buildSwitchRow(String label, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildSwitchRow(
+    String label,
+    bool value,
+    ValueChanged<bool> onChanged,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryDark)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textSecondaryDark,
+            ),
+          ),
           const Spacer(),
           Switch(value: value, onChanged: onChanged),
         ],
@@ -908,7 +1095,13 @@ class _DesignerPageState extends State<DesignerPage> {
             children: [
               Icon(icon, size: 18, color: AppTheme.textPrimaryDark),
               const SizedBox(width: 12),
-              Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.textPrimaryDark)),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppTheme.textPrimaryDark,
+                ),
+              ),
             ],
           ),
         ),
@@ -918,31 +1111,49 @@ class _DesignerPageState extends State<DesignerPage> {
 
   void _showColorPicker(Color current, ValueChanged<Color> onChanged) {
     final colors = [
-      Colors.white, Colors.black, const Color(0xFF059669), const Color(0xFF1D4ED8),
-      const Color(0xFFDC2626), const Color(0xFFF59E0B), const Color(0xFF7C3AED),
-      const Color(0xFF0284C7), const Color(0xFF92400E),
+      Colors.white,
+      Colors.black,
+      const Color(0xFF059669),
+      const Color(0xFF1D4ED8),
+      const Color(0xFFDC2626),
+      const Color(0xFFF59E0B),
+      const Color(0xFF7C3AED),
+      const Color(0xFF0284C7),
+      const Color(0xFF92400E),
     ];
-    
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.darkBgSecondary,
-        title: const Text('选择颜色', style: TextStyle(color: AppTheme.textPrimaryDark)),
+        title: const Text(
+          '选择颜色',
+          style: TextStyle(color: AppTheme.textPrimaryDark),
+        ),
         content: Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: colors.map((c) => InkWell(
-            onTap: () { onChanged(c); Navigator.pop(ctx); },
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: c,
-                borderRadius: BorderRadius.circular(8),
-                border: c == current ? Border.all(color: AppTheme.accentColor, width: 3) : null,
-              ),
-            ),
-          )).toList(),
+          children: colors
+              .map(
+                (c) => InkWell(
+                  onTap: () {
+                    onChanged(c);
+                    Navigator.pop(ctx);
+                  },
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: c,
+                      borderRadius: BorderRadius.circular(8),
+                      border: c == current
+                          ? Border.all(color: AppTheme.accentColor, width: 3)
+                          : null,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
         ),
       ),
     );
@@ -973,9 +1184,9 @@ class _DesignerPageState extends State<DesignerPage> {
   }
 
   void _exportImage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('导出功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('导出功能开发中...')));
   }
 }
 

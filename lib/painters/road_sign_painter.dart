@@ -29,7 +29,7 @@ class RoadSignPainter extends CustomPainter {
     final bgPaint = Paint()
       ..color = SignColors.urbanWhite
       ..style = PaintingStyle.fill;
-    
+
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(8));
     canvas.drawRRect(rrect, bgPaint);
@@ -43,12 +43,12 @@ class RoadSignPainter extends CustomPainter {
   void _drawTopBar(Canvas canvas, Size size) {
     final info = _getDirectionInfo();
     final directionColor = _getDirectionColor(info.roadType);
-    
+
     final barHeight = size.height * 0.12;
     final barPaint = Paint()
       ..color = directionColor
       ..style = PaintingStyle.fill;
-    
+
     final rect = Rect.fromLTWH(0, 0, size.width, barHeight);
     final rrect = RRect.fromRectAndCorners(
       rect,
@@ -59,10 +59,18 @@ class RoadSignPainter extends CustomPainter {
 
     String label = '';
     switch (direction) {
-      case 'north': label = scene.useChineseDirection ? '北向' : 'NORTH'; break;
-      case 'east': label = scene.useChineseDirection ? '东向' : 'EAST'; break;
-      case 'south': label = scene.useChineseDirection ? '南向' : 'SOUTH'; break;
-      case 'west': label = scene.useChineseDirection ? '西向' : 'WEST'; break;
+      case 'north':
+        label = scene.useChineseDirection ? '北向' : 'NORTH';
+        break;
+      case 'east':
+        label = scene.useChineseDirection ? '东向' : 'EAST';
+        break;
+      case 'south':
+        label = scene.useChineseDirection ? '南向' : 'SOUTH';
+        break;
+      case 'west':
+        label = scene.useChineseDirection ? '西向' : 'WEST';
+        break;
     }
 
     final textPainter = TextPainter(
@@ -80,14 +88,17 @@ class RoadSignPainter extends CustomPainter {
     textPainter.layout();
     textPainter.paint(
       canvas,
-      Offset((size.width - textPainter.width) / 2, (barHeight - textPainter.height) / 2),
+      Offset(
+        (size.width - textPainter.width) / 2,
+        (barHeight - textPainter.height) / 2,
+      ),
     );
   }
 
   void _drawRoadSection(Canvas canvas, Size size) {
     final info = _getDirectionInfo();
     final topOffset = size.height * 0.18;
-    
+
     final labelPainter = TextPainter(
       text: TextSpan(
         text: scene.useChineseDirection ? '道路' : 'ROAD',
@@ -130,10 +141,12 @@ class RoadSignPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     typePainter.layout();
-    
+
     final typeBgRect = Rect.fromLTWH(
-      16, topOffset + 50,
-      typePainter.width + 8, typePainter.height + 4,
+      16,
+      topOffset + 50,
+      typePainter.width + 8,
+      typePainter.height + 4,
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(typeBgRect, const Radius.circular(4)),
@@ -147,7 +160,7 @@ class RoadSignPainter extends CustomPainter {
     final dividerPaint = Paint()
       ..color = SignColors.urbanBlack.withValues(alpha: 0.1)
       ..strokeWidth = 1;
-    
+
     canvas.drawLine(
       Offset(16, dividerY),
       Offset(size.width - 16, dividerY),
@@ -158,7 +171,7 @@ class RoadSignPainter extends CustomPainter {
   void _drawDestinationSection(Canvas canvas, Size size) {
     final info = _getDirectionInfo();
     final topOffset = size.height * 0.54;
-    
+
     final labelPainter = TextPainter(
       text: TextSpan(
         text: scene.useChineseDirection ? '通往' : 'TO',
@@ -202,10 +215,12 @@ class RoadSignPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       );
       typePainter.layout();
-      
+
       final typeBgRect = Rect.fromLTWH(
-        16, topOffset + 55,
-        typePainter.width + 8, typePainter.height + 4,
+        16,
+        topOffset + 55,
+        typePainter.width + 8,
+        typePainter.height + 4,
       );
       canvas.drawRRect(
         RRect.fromRectAndRadius(typeBgRect, const Radius.circular(4)),
@@ -218,14 +233,19 @@ class RoadSignPainter extends CustomPainter {
   void _drawBottomBar(Canvas canvas, Size size) {
     final info = _getDirectionInfo();
     final shapeLabel = _getShapeLabel(info.shape);
-    
+
     if (shapeLabel.isNotEmpty) {
       final barHeight = size.height * 0.1;
       final barPaint = Paint()
         ..color = SignColors.urbanBlack.withValues(alpha: 0.05)
         ..style = PaintingStyle.fill;
-      
-      final rect = Rect.fromLTWH(0, size.height - barHeight, size.width, barHeight);
+
+      final rect = Rect.fromLTWH(
+        0,
+        size.height - barHeight,
+        size.width,
+        barHeight,
+      );
       final rrect = RRect.fromRectAndCorners(
         rect,
         bottomLeft: const Radius.circular(8),
@@ -247,62 +267,89 @@ class RoadSignPainter extends CustomPainter {
       shapePainter.layout();
       shapePainter.paint(
         canvas,
-        Offset((size.width - shapePainter.width) / 2, size.height - barHeight / 2 - shapePainter.height / 2),
+        Offset(
+          (size.width - shapePainter.width) / 2,
+          size.height - barHeight / 2 - shapePainter.height / 2,
+        ),
       );
     }
   }
 
   DirectionInfo _getDirectionInfo() {
     switch (direction) {
-      case 'north': return scene.north;
-      case 'east': return scene.east;
-      case 'south': return scene.south;
-      case 'west': return scene.west;
-      default: return scene.north;
+      case 'north':
+        return scene.north;
+      case 'east':
+        return scene.east;
+      case 'south':
+        return scene.south;
+      case 'west':
+        return scene.west;
+      default:
+        return scene.north;
     }
   }
 
   Color _getDirectionColor(RoadType type) {
     switch (type) {
-      case RoadType.highway: return SignColors.highwayGreen;
-      case RoadType.scenic: return SignColors.scenicBlue;
-      default: return SignColors.urbanBlack;
+      case RoadType.highway:
+        return SignColors.highwayGreen;
+      case RoadType.scenic:
+        return SignColors.scenicBlue;
+      default:
+        return SignColors.urbanBlack;
     }
   }
 
   Color _getDestinationColor(DestinationType type) {
     switch (type) {
-      case DestinationType.highway: return SignColors.highwayGreen;
-      case DestinationType.scenic: return SignColors.scenicBlue;
-      default: return SignColors.urbanBlack;
+      case DestinationType.highway:
+        return SignColors.highwayGreen;
+      case DestinationType.scenic:
+        return SignColors.scenicBlue;
+      default:
+        return SignColors.urbanBlack;
     }
   }
 
   String _getTypeLabel(RoadType type) {
     switch (type) {
-      case RoadType.highway: return scene.useChineseDirection ? '高速' : 'G';
-      case RoadType.scenic: return scene.useChineseDirection ? '景区' : 'S';
-      default: return '';
+      case RoadType.highway:
+        return scene.useChineseDirection ? '高速' : 'G';
+      case RoadType.scenic:
+        return scene.useChineseDirection ? '景区' : 'S';
+      default:
+        return '';
     }
   }
 
   String _getDestinationTypeLabel(DestinationType type) {
     switch (type) {
-      case DestinationType.highway: return scene.useChineseDirection ? '高速' : 'HIGHWAY';
-      case DestinationType.scenic: return scene.useChineseDirection ? '景区' : 'SCENIC';
-      default: return '';
+      case DestinationType.highway:
+        return scene.useChineseDirection ? '高速' : 'HIGHWAY';
+      case DestinationType.scenic:
+        return scene.useChineseDirection ? '景区' : 'SCENIC';
+      default:
+        return '';
     }
   }
 
   String _getShapeLabel(IntersectionShape shape) {
     switch (shape) {
-      case IntersectionShape.crossroad: return '十字路口';
-      case IntersectionShape.tJunctionFrontLeft: return 'T形路口';
-      case IntersectionShape.tJunctionFrontRight: return 'T形路口';
-      case IntersectionShape.tJunctionLeftRight: return 'T形路口';
-      case IntersectionShape.yJunction: return 'Y形路口';
-      case IntersectionShape.roundabout: return '环岛';
-      default: return '';
+      case IntersectionShape.crossroad:
+        return '十字路口';
+      case IntersectionShape.tJunctionFrontLeft:
+        return 'T形路口';
+      case IntersectionShape.tJunctionFrontRight:
+        return 'T形路口';
+      case IntersectionShape.tJunctionLeftRight:
+        return 'T形路口';
+      case IntersectionShape.yJunction:
+        return 'Y形路口';
+      case IntersectionShape.roundabout:
+        return '环岛';
+      default:
+        return '';
     }
   }
 
@@ -344,7 +391,12 @@ class IntersectionOverviewPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     canvas.drawRect(
-      Rect.fromLTWH(center.dx - roadWidth / 2, 0, roadWidth, center.dy - roadWidth / 2),
+      Rect.fromLTWH(
+        center.dx - roadWidth / 2,
+        0,
+        roadWidth,
+        center.dy - roadWidth / 2,
+      ),
       roadPaint,
     );
     canvas.drawLine(
@@ -354,7 +406,12 @@ class IntersectionOverviewPainter extends CustomPainter {
     );
 
     canvas.drawRect(
-      Rect.fromLTWH(center.dx - roadWidth / 2, center.dy + roadWidth / 2, roadWidth, size.height - center.dy - roadWidth / 2),
+      Rect.fromLTWH(
+        center.dx - roadWidth / 2,
+        center.dy + roadWidth / 2,
+        roadWidth,
+        size.height - center.dy - roadWidth / 2,
+      ),
       roadPaint,
     );
     canvas.drawLine(
@@ -364,7 +421,12 @@ class IntersectionOverviewPainter extends CustomPainter {
     );
 
     canvas.drawRect(
-      Rect.fromLTWH(center.dx + roadWidth / 2, center.dy - roadWidth / 2, size.width - center.dx - roadWidth / 2, roadWidth),
+      Rect.fromLTWH(
+        center.dx + roadWidth / 2,
+        center.dy - roadWidth / 2,
+        size.width - center.dx - roadWidth / 2,
+        roadWidth,
+      ),
       roadPaint,
     );
     canvas.drawLine(
@@ -374,7 +436,12 @@ class IntersectionOverviewPainter extends CustomPainter {
     );
 
     canvas.drawRect(
-      Rect.fromLTWH(0, center.dy - roadWidth / 2, center.dx - roadWidth / 2, roadWidth),
+      Rect.fromLTWH(
+        0,
+        center.dy - roadWidth / 2,
+        center.dx - roadWidth / 2,
+        roadWidth,
+      ),
       roadPaint,
     );
     canvas.drawLine(
@@ -427,23 +494,35 @@ class IntersectionOverviewPainter extends CustomPainter {
 
   void _drawRoadLabels(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final roadWidth = size.width * 0.12;
 
     final roads = [
-      (scene.north.roadName.isEmpty ? '北向道路' : scene.north.roadName, Offset(center.dx, size.height * 0.2), TextDirection.ltr),
-      (scene.east.roadName.isEmpty ? '东向道路' : scene.east.roadName, Offset(size.width * 0.75, center.dy), TextDirection.ltr),
-      (scene.south.roadName.isEmpty ? '南向道路' : scene.south.roadName, Offset(center.dx, size.height * 0.8), TextDirection.ltr),
-      (scene.west.roadName.isEmpty ? '西向道路' : scene.west.roadName, Offset(size.width * 0.25, center.dy), TextDirection.ltr),
+      (
+        scene.north.roadName.isEmpty ? '北向道路' : scene.north.roadName,
+        Offset(center.dx, size.height * 0.2),
+        TextDirection.ltr,
+      ),
+      (
+        scene.east.roadName.isEmpty ? '东向道路' : scene.east.roadName,
+        Offset(size.width * 0.75, center.dy),
+        TextDirection.ltr,
+      ),
+      (
+        scene.south.roadName.isEmpty ? '南向道路' : scene.south.roadName,
+        Offset(center.dx, size.height * 0.8),
+        TextDirection.ltr,
+      ),
+      (
+        scene.west.roadName.isEmpty ? '西向道路' : scene.west.roadName,
+        Offset(size.width * 0.25, center.dy),
+        TextDirection.ltr,
+      ),
     ];
 
     for (final (name, pos, textDir) in roads) {
       final painter = TextPainter(
         text: TextSpan(
           text: name,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Color(0xFF94A3B8),
-          ),
+          style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
         ),
         textDirection: textDir,
       );

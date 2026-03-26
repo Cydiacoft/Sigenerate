@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../models/traffic_sign.dart';
-import '../signs/gb5768_signs.dart';
 
 class TrafficSignPainter extends CustomPainter {
   final TrafficSign sign;

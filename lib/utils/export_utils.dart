@@ -5,12 +5,12 @@ import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/intersection_scene.dart';
-import '../painters/road_sign_painter.dart';
 
 class ExportUtils {
   static Future<Uint8List?> captureWidget(GlobalKey key) async {
     try {
-      final boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return null;
 
       final image = await boundary.toImage(pixelRatio: 3.0);
@@ -21,7 +21,10 @@ class ExportUtils {
     }
   }
 
-  static Future<String?> saveImage(Uint8List imageBytes, String filename) async {
+  static Future<String?> saveImage(
+    Uint8List imageBytes,
+    String filename,
+  ) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/traffic_signs';
@@ -53,7 +56,8 @@ class ExportUtils {
     for (int i = 0; i < 4; i++) {
       final bytes = await captureWidget(keys[i]);
       if (bytes != null) {
-        final filename = '${scene.name.isEmpty ? "intersection" : scene.name}_${directions[i]}.png';
+        final filename =
+            '${scene.name.isEmpty ? "intersection" : scene.name}_${directions[i]}.png';
         final path = await saveImage(bytes, filename);
         if (path != null) {
           paths.add(path);
@@ -102,13 +106,12 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
   void initState() {
     super.initState();
     _selectedColor = widget.initialColor;
-    _hexController = TextEditingController(
-      text: _colorToHex(_selectedColor),
-    );
+    _hexController = TextEditingController(text: _colorToHex(_selectedColor));
   }
 
   String _colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
+    return '#${argb.substring(2).toUpperCase()}';
   }
 
   Color _hexToColor(String hex) {
@@ -145,7 +148,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                     decoration: BoxDecoration(
                       color: color,
                       border: Border.all(
-                        color: _selectedColor == color ? Colors.white : Colors.transparent,
+                        color: _selectedColor == color
+                            ? Colors.white
+                            : Colors.transparent,
                         width: 3,
                       ),
                       borderRadius: BorderRadius.circular(4),

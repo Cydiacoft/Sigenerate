@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'theme/app_theme.dart';
-import 'pages/metro_editor_page.dart';
+
+import 'pages/metro_guide_editor_page.dart';
 import 'pages/road_editor_page.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const TrafficSignApp());
@@ -13,7 +14,7 @@ class TrafficSignApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '导视图设计器',
+      title: '标志设计器',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -34,11 +35,8 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              '导视图设计器',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+              '标志设计器',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 48),
             Row(
@@ -51,7 +49,9 @@ class HomePage extends StatelessWidget {
                   const Color(0xFF001D31),
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const MetroEditorPage()),
+                    MaterialPageRoute(
+                      builder: (_) => const MetroGuideEditorPage(),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 24),

@@ -17,7 +17,7 @@ class MetroGuideEditorPage extends StatefulWidget {
 
 class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
   final GlobalKey<MetroGuideCanvasState> _canvasKey = GlobalKey();
-  
+
   MetroGuideProject? _currentProject;
   String? _currentFilePath;
   List<MetroGuideItem> _items = [];
@@ -25,7 +25,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
   String _backgroundColor = '#001D31';
   bool _hasUnsavedChanges = false;
   bool _canUndo = false;
-  bool _canRedo = false;
+  final bool _canRedo = false;
 
   @override
   void initState() {
@@ -107,7 +107,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
         final content = await file.readAsString();
         final json = jsonDecode(content) as Map<String, dynamic>;
         final project = MetroGuideProject.fromJson(json);
-        
+
         setState(() {
           _currentProject = project;
           _currentFilePath = file.path;
@@ -124,10 +124,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('打开文件失败: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('打开文件失败: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -161,10 +158,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('保存失败: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
         );
       }
       return false;
@@ -185,7 +179,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
         if (!filePath.endsWith('.vgp')) {
           filePath = '$filePath.vgp';
         }
-        
+
         final project = _buildCurrentProject();
         final file = File(filePath);
         await file.writeAsString(
@@ -209,10 +203,7 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('保存失败: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -232,8 +223,12 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
   }
 
   void _showProjectSettings() {
-    final nameController = TextEditingController(text: _currentProject?.name ?? '');
-    final descController = TextEditingController(text: _currentProject?.description ?? '');
+    final nameController = TextEditingController(
+      text: _currentProject?.name ?? '',
+    );
+    final descController = TextEditingController(
+      text: _currentProject?.description ?? '',
+    );
 
     showDialog(
       context: context,
@@ -248,7 +243,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: '项目名称',
-                labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                labelStyle: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -266,7 +263,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               maxLines: 2,
               decoration: InputDecoration(
                 labelText: '项目描述（可选）',
-                labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                labelStyle: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -290,7 +289,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               setState(() {
                 _currentProject = _currentProject?.copyWith(
                   name: nameController.text.trim(),
-                  description: descController.text.trim().isEmpty ? null : descController.text.trim(),
+                  description: descController.text.trim().isEmpty
+                      ? null
+                      : descController.text.trim(),
                 );
                 _hasUnsavedChanges = true;
               });
@@ -331,12 +332,12 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
 
   void _showEditDialog(String itemId) {
     final item = _items.firstWhere((i) => i.id == itemId);
-    if (item.type == GuideItemType.line || 
+    if (item.type == GuideItemType.line ||
         item.type == GuideItemType.cls ||
         item.type == GuideItemType.clss) {
       _showColorEditDialog(item);
-    } else if (item.type == GuideItemType.text || 
-               item.fileName.contains('text')) {
+    } else if (item.type == GuideItemType.text ||
+        item.fileName.contains('text')) {
       _showTextEditDialog(item);
     } else if (item.type == GuideItemType.sub) {
       _showColorBandEditDialog(item);
@@ -362,7 +363,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: '中文文本',
-                  labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -379,7 +382,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: '英文文本',
-                  labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -399,7 +404,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     label: const Text('左'),
                     selected: alignment == TextAlignment.start,
                     onSelected: (selected) {
-                      if (selected) setDialogState(() => alignment = TextAlignment.start);
+                      if (selected) {
+                        setDialogState(() => alignment = TextAlignment.start);
+                      }
                     },
                   ),
                   const SizedBox(width: 8),
@@ -407,7 +414,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     label: const Text('中'),
                     selected: alignment == TextAlignment.middle,
                     onSelected: (selected) {
-                      if (selected) setDialogState(() => alignment = TextAlignment.middle);
+                      if (selected) {
+                        setDialogState(() => alignment = TextAlignment.middle);
+                      }
                     },
                   ),
                   const SizedBox(width: 8),
@@ -415,7 +424,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     label: const Text('右'),
                     selected: alignment == TextAlignment.end,
                     onSelected: (selected) {
-                      if (selected) setDialogState(() => alignment = TextAlignment.end);
+                      if (selected) {
+                        setDialogState(() => alignment = TextAlignment.end);
+                      }
                     },
                   ),
                 ],
@@ -464,26 +475,36 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [
-                  '#E4002B', '#A09A39', '#FAC000', '#008C44', '#823130',
-                  '#AA7F3E', '#E60085', '#00A1DE', '#8FC2E3', '#98C5A3',
-                ].map((color) {
-                  final isSelected = selectedColor == color;
-                  return InkWell(
-                    onTap: () => setDialogState(() => selectedColor = color),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _parseColor(color),
-                        borderRadius: BorderRadius.circular(8),
-                        border: isSelected
-                            ? Border.all(color: Colors.white, width: 2)
-                            : null,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                children:
+                    [
+                      '#E4002B',
+                      '#A09A39',
+                      '#FAC000',
+                      '#008C44',
+                      '#823130',
+                      '#AA7F3E',
+                      '#E60085',
+                      '#00A1DE',
+                      '#8FC2E3',
+                      '#98C5A3',
+                    ].map((color) {
+                      final isSelected = selectedColor == color;
+                      return InkWell(
+                        onTap: () =>
+                            setDialogState(() => selectedColor = color),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: _parseColor(color),
+                            borderRadius: BorderRadius.circular(8),
+                            border: isSelected
+                                ? Border.all(color: Colors.white, width: 2)
+                                : null,
+                          ),
+                        ),
+                      );
+                    }).toList(),
               ),
             ],
           ),
@@ -530,7 +551,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: '中文文本',
-                  labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -547,7 +570,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: '英文文本',
-                  labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: AppTheme.darkBorder),
@@ -567,7 +592,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     label: const Text('左'),
                     selected: alignment == TextAlignment.start,
                     onSelected: (selected) {
-                      if (selected) setDialogState(() => alignment = TextAlignment.start);
+                      if (selected) {
+                        setDialogState(() => alignment = TextAlignment.start);
+                      }
                     },
                   ),
                   const SizedBox(width: 8),
@@ -575,7 +602,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     label: const Text('中'),
                     selected: alignment == TextAlignment.middle,
                     onSelected: (selected) {
-                      if (selected) setDialogState(() => alignment = TextAlignment.middle);
+                      if (selected) {
+                        setDialogState(() => alignment = TextAlignment.middle);
+                      }
                     },
                   ),
                   const SizedBox(width: 8),
@@ -583,7 +612,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     label: const Text('右'),
                     selected: alignment == TextAlignment.end,
                     onSelected: (selected) {
-                      if (selected) setDialogState(() => alignment = TextAlignment.end);
+                      if (selected) {
+                        setDialogState(() => alignment = TextAlignment.end);
+                      }
                     },
                   ),
                 ],
@@ -635,28 +666,44 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [
-                  '#E4002B', '#A09A39', '#FAC000', '#008C44', '#823130',
-                  '#AA7F3E', '#E60085', '#00A1DE', '#8FC2E3', '#98C5A3',
-                  '#DA81A6', '#5F6D3F', '#8E3700', '#4D3700', '#BF83BC',
-                  '#7D8B2F', '#6D4C7D', '#B75700',
-                ].map((color) {
-                  final isSelected = selectedColor == color;
-                  return InkWell(
-                    onTap: () => setDialogState(() => selectedColor = color),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _parseColor(color),
-                        shape: BoxShape.circle,
-                        border: isSelected
-                            ? Border.all(color: Colors.white, width: 2)
-                            : null,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                children:
+                    [
+                      '#E4002B',
+                      '#A09A39',
+                      '#FAC000',
+                      '#008C44',
+                      '#823130',
+                      '#AA7F3E',
+                      '#E60085',
+                      '#00A1DE',
+                      '#8FC2E3',
+                      '#98C5A3',
+                      '#DA81A6',
+                      '#5F6D3F',
+                      '#8E3700',
+                      '#4D3700',
+                      '#BF83BC',
+                      '#7D8B2F',
+                      '#6D4C7D',
+                      '#B75700',
+                    ].map((color) {
+                      final isSelected = selectedColor == color;
+                      return InkWell(
+                        onTap: () =>
+                            setDialogState(() => selectedColor = color),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: _parseColor(color),
+                            shape: BoxShape.circle,
+                            border: isSelected
+                                ? Border.all(color: Colors.white, width: 2)
+                                : null,
+                          ),
+                        ),
+                      );
+                    }).toList(),
               ),
             ],
           ),
@@ -704,26 +751,36 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [
-                  '#E4002B', '#A09A39', '#FAC000', '#008C44', '#823130',
-                  '#AA7F3E', '#E60085', '#00A1DE', '#8FC2E3', '#98C5A3',
-                ].map((color) {
-                  final isSelected = selectedColor == color;
-                  return InkWell(
-                    onTap: () => setDialogState(() => selectedColor = color),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _parseColor(color),
-                        borderRadius: BorderRadius.circular(8),
-                        border: isSelected
-                            ? Border.all(color: Colors.white, width: 2)
-                            : null,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                children:
+                    [
+                      '#E4002B',
+                      '#A09A39',
+                      '#FAC000',
+                      '#008C44',
+                      '#823130',
+                      '#AA7F3E',
+                      '#E60085',
+                      '#00A1DE',
+                      '#8FC2E3',
+                      '#98C5A3',
+                    ].map((color) {
+                      final isSelected = selectedColor == color;
+                      return InkWell(
+                        onTap: () =>
+                            setDialogState(() => selectedColor = color),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: _parseColor(color),
+                            borderRadius: BorderRadius.circular(8),
+                            border: isSelected
+                                ? Border.all(color: Colors.white, width: 2)
+                                : null,
+                          ),
+                        ),
+                      );
+                    }).toList(),
               ),
             ],
           ),
@@ -736,7 +793,9 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               onPressed: () {
                 final index = _items.indexWhere((i) => i.id == item.id);
                 if (index != -1) {
-                  final updatedItem = item.copyWith(colorBandColor: selectedColor);
+                  final updatedItem = item.copyWith(
+                    colorBandColor: selectedColor,
+                  );
                   final newItems = List<MetroGuideItem>.from(_items);
                   newItems[index] = updatedItem;
                   _onItemsChanged(newItems);
@@ -871,7 +930,11 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.folder_open, size: 16, color: Colors.white70),
+                  const Icon(
+                    Icons.folder_open,
+                    size: 16,
+                    color: Colors.white70,
+                  ),
                   const SizedBox(width: 8),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 150),
@@ -886,7 +949,11 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_drop_down, size: 16, color: Colors.white70),
+                  const Icon(
+                    Icons.arrow_drop_down,
+                    size: 16,
+                    color: Colors.white70,
+                  ),
                 ],
               ),
             ),
@@ -991,7 +1058,12 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
             tooltip: '重做 (Ctrl+Shift+Z)',
             onPressed: _canRedo ? _redo : null,
           ),
-          Container(width: 1, height: 24, color: AppTheme.darkBorder, margin: const EdgeInsets.symmetric(horizontal: 8)),
+          Container(
+            width: 1,
+            height: 24,
+            color: AppTheme.darkBorder,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+          ),
           _buildToolbarButton(
             icon: Icons.delete_outline,
             tooltip: '清空画板',

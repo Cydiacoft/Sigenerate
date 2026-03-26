@@ -20,21 +20,21 @@ class CanvasPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
-    
+
     final scaleX = size.width / canvasSize.width;
     final scaleY = size.height / canvasSize.height;
     final scale = scaleX < scaleY ? scaleX : scaleY;
-    
+
     final offsetX = (size.width - canvasSize.width * scale) / 2;
     final offsetY = (size.height - canvasSize.height * scale) / 2;
-    
+
     canvas.translate(offsetX, offsetY);
     canvas.scale(scale);
 
     _drawBackground(canvas);
     if (showGrid) _drawGrid(canvas);
     _drawElements(canvas);
-    
+
     canvas.restore();
   }
 
@@ -42,7 +42,7 @@ class CanvasPainter extends CustomPainter {
     final paint = Paint()
       ..color = backgroundColor
       ..style = PaintingStyle.fill;
-    
+
     final rrect = RRect.fromRectAndRadius(
       Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height),
       const Radius.circular(4),
@@ -62,19 +62,11 @@ class CanvasPainter extends CustomPainter {
       ..strokeWidth = 1;
 
     for (double x = 0; x <= canvasSize.width; x += 20) {
-      canvas.drawLine(
-        Offset(x, 0),
-        Offset(x, canvasSize.height),
-        gridPaint,
-      );
+      canvas.drawLine(Offset(x, 0), Offset(x, canvasSize.height), gridPaint);
     }
 
     for (double y = 0; y <= canvasSize.height; y += 20) {
-      canvas.drawLine(
-        Offset(0, y),
-        Offset(canvasSize.width, y),
-        gridPaint,
-      );
+      canvas.drawLine(Offset(0, y), Offset(canvasSize.width, y), gridPaint);
     }
   }
 
@@ -254,7 +246,7 @@ class CanvasPainter extends CustomPainter {
 
     final iconPainter = TextPainter(
       text: TextSpan(
-        text: String.fromCharCode(iconData!.codePoint),
+        text: String.fromCharCode(iconData.codePoint),
         style: TextStyle(
           fontSize: element.fontSize,
           fontFamily: iconData.fontFamily,
@@ -303,39 +295,4 @@ class CanvasPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CanvasPainter oldDelegate) => true;
-}
-
-extension on double {
-  double cos() => math_cos(this);
-  double sin() => math_sin(this);
-}
-
-double math_cos(double x) {
-  return _cos(x);
-}
-
-double math_sin(double x) {
-  return _sin(x);
-}
-
-double _cos(double x) {
-  x = x % (2 * 3.141592653589793);
-  double result = 1.0;
-  double term = 1.0;
-  for (int n = 1; n <= 10; n++) {
-    term *= -x * x / ((2 * n - 1) * (2 * n));
-    result += term;
-  }
-  return result;
-}
-
-double _sin(double x) {
-  x = x % (2 * 3.141592653589793);
-  double result = x;
-  double term = x;
-  for (int n = 1; n <= 10; n++) {
-    term *= -x * x / ((2 * n) * (2 * n + 1));
-    result += term;
-  }
-  return result;
 }

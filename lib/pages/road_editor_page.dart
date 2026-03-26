@@ -17,7 +17,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
   String? _currentFilePath;
   String _projectName = '新项目';
   bool _hasUnsavedChanges = false;
-  
+
   TemplateLayout? _selectedTemplate;
   Map<String, String> _slotValues = {};
   String? _selectedSlotId;
@@ -89,19 +89,27 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : AppTheme.darkBg,
+                        color: isSelected
+                            ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                            : AppTheme.darkBg,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
+                          color: isSelected
+                              ? AppTheme.primaryColor
+                              : AppTheme.darkBorder,
                           width: isSelected ? 2 : 1,
                         ),
-                        boxShadow: isSelected ? [
-                          BoxShadow(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ] : null,
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: AppTheme.primaryColor.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
                       ),
                       child: Row(
                         children: [
@@ -120,7 +128,11 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                               ],
                             ),
                             child: const Center(
-                              child: Icon(Icons.signpost, size: 18, color: Colors.white),
+                              child: Icon(
+                                Icons.signpost,
+                                size: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -132,7 +144,9 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                                   template.name,
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: isSelected ? AppTheme.primaryColor : AppTheme.textPrimaryDark,
+                                    color: isSelected
+                                        ? AppTheme.primaryColor
+                                        : AppTheme.textPrimaryDark,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -147,7 +161,11 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                             ),
                           ),
                           if (isSelected)
-                            const Icon(Icons.check_circle, size: 16, color: AppTheme.primaryColor),
+                            const Icon(
+                              Icons.check_circle,
+                              size: 16,
+                              color: AppTheme.primaryColor,
+                            ),
                         ],
                       ),
                     ),
@@ -201,7 +219,11 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.folder_open, size: 16, color: Colors.white70),
+                  const Icon(
+                    Icons.folder_open,
+                    size: 16,
+                    color: Colors.white70,
+                  ),
                   const SizedBox(width: 8),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 150),
@@ -216,26 +238,85 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_drop_down, size: 16, color: Colors.white70),
+                  const Icon(
+                    Icons.arrow_drop_down,
+                    size: 16,
+                    color: Colors.white70,
+                  ),
                 ],
               ),
             ),
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'new', child: Row(children: [Icon(Icons.add, size: 18), SizedBox(width: 12), Text('新建项目')])),
-              const PopupMenuItem(value: 'open', child: Row(children: [Icon(Icons.folder_open, size: 18), SizedBox(width: 12), Text('打开项目')])),
+              const PopupMenuItem(
+                value: 'new',
+                child: Row(
+                  children: [
+                    Icon(Icons.add, size: 18),
+                    SizedBox(width: 12),
+                    Text('新建项目'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'open',
+                child: Row(
+                  children: [
+                    Icon(Icons.folder_open, size: 18),
+                    SizedBox(width: 12),
+                    Text('打开项目'),
+                  ],
+                ),
+              ),
               const PopupMenuDivider(),
-              const PopupMenuItem(value: 'save', child: Row(children: [Icon(Icons.save, size: 18), SizedBox(width: 12), Text('保存')])),
-              const PopupMenuItem(value: 'saveas', child: Row(children: [Icon(Icons.save_as, size: 18), SizedBox(width: 12), Text('另存为...')])),
+              const PopupMenuItem(
+                value: 'save',
+                child: Row(
+                  children: [
+                    Icon(Icons.save, size: 18),
+                    SizedBox(width: 12),
+                    Text('保存'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'saveas',
+                child: Row(
+                  children: [
+                    Icon(Icons.save_as, size: 18),
+                    SizedBox(width: 12),
+                    Text('另存为...'),
+                  ],
+                ),
+              ),
               const PopupMenuDivider(),
-              const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings, size: 18), SizedBox(width: 12), Text('项目设置')])),
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings, size: 18),
+                    SizedBox(width: 12),
+                    Text('项目设置'),
+                  ],
+                ),
+              ),
             ],
             onSelected: (value) {
               switch (value) {
-                case 'new': _newProject(); break;
-                case 'open': _openProject(); break;
-                case 'save': _saveProject(); break;
-                case 'saveas': _saveProjectAs(); break;
-                case 'settings': _showProjectSettings(); break;
+                case 'new':
+                  _newProject();
+                  break;
+                case 'open':
+                  _openProject();
+                  break;
+                case 'save':
+                  _saveProject();
+                  break;
+                case 'saveas':
+                  _saveProjectAs();
+                  break;
+                case 'settings':
+                  _showProjectSettings();
+                  break;
               }
             },
           ),
@@ -249,7 +330,11 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
               ),
               child: Text(
                 _selectedTemplate!.name,
-                style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           const Spacer(),
@@ -266,10 +351,13 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
   Widget _buildCanvas() {
     if (_selectedTemplate == null) {
       return const Center(
-        child: Text('请选择模板', style: TextStyle(color: AppTheme.textSecondaryDark)),
+        child: Text(
+          '请选择模板',
+          style: TextStyle(color: AppTheme.textSecondaryDark),
+        ),
       );
     }
-    
+
     return Container(
       margin: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -304,14 +392,20 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
           Expanded(
             child: Text(
               _currentFilePath ?? '新建项目 - 点击左上角菜单保存',
-              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondaryDark),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppTheme.textSecondaryDark,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           if (_selectedTemplate != null)
             Text(
               '${_selectedTemplate!.name} ${_selectedTemplate!.canvasSize.width.toInt()}x${_selectedTemplate!.canvasSize.height.toInt()}',
-              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondaryDark),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppTheme.textSecondaryDark,
+              ),
             ),
           if (_hasUnsavedChanges) ...[
             const SizedBox(width: 12),
@@ -321,7 +415,10 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Text('未保存', style: TextStyle(fontSize: 10, color: Colors.orange)),
+              child: const Text(
+                '未保存',
+                style: TextStyle(fontSize: 10, color: Colors.orange),
+              ),
             ),
           ],
         ],
@@ -334,7 +431,12 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
       return Container(
         width: 300,
         color: AppTheme.darkBgSecondary,
-        child: const Center(child: Text('请选择模板', style: TextStyle(color: AppTheme.textSecondaryDark))),
+        child: const Center(
+          child: Text(
+            '请选择模板',
+            style: TextStyle(color: AppTheme.textSecondaryDark),
+          ),
+        ),
       );
     }
 
@@ -346,10 +448,19 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
           Container(
             height: 56,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: AppTheme.darkBorder))),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppTheme.darkBorder)),
+            ),
             child: const Row(
               children: [
-                Text('编辑内容', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryDark)),
+                Text(
+                  '编辑内容',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textPrimaryDark,
+                  ),
+                ),
               ],
             ),
           ),
@@ -361,7 +472,9 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                 children: [
                   _buildColorPresets(),
                   const SizedBox(height: 24),
-                  ..._selectedTemplate!.slots.map((slot) => _buildSlotEditor(slot)),
+                  ..._selectedTemplate!.slots.map(
+                    (slot) => _buildSlotEditor(slot),
+                  ),
                 ],
               ),
             ),
@@ -375,7 +488,14 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('背景配色', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor)),
+        const Text(
+          '背景配色',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primaryColor,
+          ),
+        ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -406,11 +526,17 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(8),
-          border: isSelected ? Border.all(color: AppTheme.accentColor, width: 2) : null,
+          border: isSelected
+              ? Border.all(color: AppTheme.accentColor, width: 2)
+              : null,
         ),
         child: Text(
           name,
-          style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 10,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
@@ -427,9 +553,13 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.darkBg,
+            color: isSelected
+                ? AppTheme.primaryColor.withValues(alpha: 0.1)
+                : AppTheme.darkBg,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder),
+            border: Border.all(
+              color: isSelected ? AppTheme.primaryColor : AppTheme.darkBorder,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,27 +571,45 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                       slot.label,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryDark,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : AppTheme.textSecondaryDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  if (isSelected) const Icon(Icons.edit, size: 14, color: AppTheme.primaryColor),
+                  if (isSelected)
+                    const Icon(
+                      Icons.edit,
+                      size: 14,
+                      color: AppTheme.primaryColor,
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
               TextField(
-                style: const TextStyle(fontSize: 14, color: AppTheme.textPrimaryDark),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.textPrimaryDark,
+                ),
                 decoration: InputDecoration(
                   hintText: '输入${slot.label}...',
                   hintStyle: const TextStyle(color: AppTheme.textSecondaryDark),
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
                   filled: true,
                   fillColor: AppTheme.darkBgSecondary,
                 ),
-                controller: TextEditingController(text: _slotValues[slot.id] ?? ''),
+                controller: TextEditingController(
+                  text: _slotValues[slot.id] ?? '',
+                ),
                 onChanged: (v) => setState(() {
                   _slotValues[slot.id] = v;
                   _hasUnsavedChanges = true;
@@ -475,7 +623,9 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
   }
 
   void _exportImage() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('导出功能开发中...')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('导出功能开发中...')));
   }
 
   void _newProject() {
@@ -499,17 +649,25 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         final file = File(result.files.single.path!);
         final content = await file.readAsString();
         final json = jsonDecode(content) as Map<String, dynamic>;
-        
+
         setState(() {
           _projectName = json['name'] as String? ?? '新项目';
           _currentFilePath = file.path;
           _hasUnsavedChanges = false;
         });
-        
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('项目已打开')));
+
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('项目已打开')));
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('打开失败: $e'), backgroundColor: Colors.red));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('打开失败: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -526,26 +684,36 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         if (result == null) return;
         filePath = result.endsWith('.ved') ? result : '$result.ved';
       }
-      
+
       final json = {
         'name': _projectName,
         'version': '1.0.0',
         'templateName': _selectedTemplate?.name ?? '',
         'slotValues': _slotValues,
-        'backgroundColor': '#${_backgroundColor.value.toRadixString(16).padLeft(8, '0').substring(2)}',
+        'backgroundColor': _colorToHex(_backgroundColor),
         'savedAt': DateTime.now().toIso8601String(),
       };
-      
-      await File(filePath).writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-      
+
+      await File(
+        filePath,
+      ).writeAsString(const JsonEncoder.withIndent('  ').convert(json));
+
       setState(() {
         _currentFilePath = filePath;
         _hasUnsavedChanges = false;
       });
-      
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已保存到: $filePath')));
+
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('已保存到: $filePath')));
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -558,34 +726,44 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         type: FileType.custom,
       );
       if (result == null) return;
-      
+
       String filePath = result.endsWith('.ved') ? result : '$result.ved';
-      
+
       final json = {
         'name': _projectName,
         'version': '1.0.0',
         'templateName': _selectedTemplate?.name ?? '',
         'slotValues': _slotValues,
-        'backgroundColor': '#${_backgroundColor.value.toRadixString(16).padLeft(8, '0').substring(2)}',
+        'backgroundColor': _colorToHex(_backgroundColor),
         'savedAt': DateTime.now().toIso8601String(),
       };
-      
-      await File(filePath).writeAsString(const JsonEncoder.withIndent('  ').convert(json));
-      
+
+      await File(
+        filePath,
+      ).writeAsString(const JsonEncoder.withIndent('  ').convert(json));
+
       setState(() {
         _currentFilePath = filePath;
         _hasUnsavedChanges = false;
       });
-      
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已保存到: $filePath')));
+
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('已保存到: $filePath')));
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('保存失败: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
   void _showProjectSettings() {
     final nameController = TextEditingController(text: _projectName);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -594,10 +772,16 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         content: TextField(
           controller: nameController,
           style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(labelText: '项目名称', labelStyle: TextStyle(color: Colors.white54)),
+          decoration: const InputDecoration(
+            labelText: '项目名称',
+            labelStyle: TextStyle(color: Colors.white54),
+          ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('取消')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消'),
+          ),
           ElevatedButton(
             onPressed: () {
               if (nameController.text.trim().isNotEmpty) {
@@ -613,5 +797,10 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
         ],
       ),
     );
+  }
+
+  String _colorToHex(Color color) {
+    final argb = color.toARGB32().toRadixString(16).padLeft(8, '0');
+    return '#${argb.substring(2)}';
   }
 }
