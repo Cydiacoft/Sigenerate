@@ -612,15 +612,32 @@ class GuideItemAssets {
     'clss@31.svg',
   ];
 
-  static Map<GuideItemType, List<String>> groupedItemsByCity(String city) => {
-    GuideItemType.line: getLineItems(city),
-    GuideItemType.way: wayItems,
-    GuideItemType.stn: stnItems,
-    GuideItemType.oth: othItems,
-    GuideItemType.sub: subItems,
-    GuideItemType.cls: clsItems,
-    GuideItemType.clss: getClssItems(city),
-  };
+  static Map<GuideItemType, List<String>> groupedItemsByCity(String city) {
+    final nativeTypes = MetroCityAssetProfiles.nativeBuiltInTypes(city);
+    return {
+      GuideItemType.line: nativeTypes.contains(GuideItemType.line)
+          ? getLineItems(city)
+          : const [],
+      GuideItemType.way: nativeTypes.contains(GuideItemType.way)
+          ? wayItems
+          : const [],
+      GuideItemType.stn: nativeTypes.contains(GuideItemType.stn)
+          ? stnItems
+          : const [],
+      GuideItemType.oth: nativeTypes.contains(GuideItemType.oth)
+          ? othItems
+          : const [],
+      GuideItemType.sub: nativeTypes.contains(GuideItemType.sub)
+          ? subItems
+          : const [],
+      GuideItemType.cls: nativeTypes.contains(GuideItemType.cls)
+          ? clsItems
+          : const [],
+      GuideItemType.clss: nativeTypes.contains(GuideItemType.clss)
+          ? getClssItems(city)
+          : const [],
+    };
+  }
 
   static Map<GuideItemType, List<String>> get groupedItems => {
     GuideItemType.line: lineItems,
@@ -638,6 +655,37 @@ class GuideItemAssets {
       (type) => type.name == prefix,
       orElse: () => GuideItemType.oth,
     );
+  }
+}
+
+class MetroCityAssetProfiles {
+  static const Map<String, Set<GuideItemType>> _nativeBuiltInTypes = {
+    'shanghai': {
+      GuideItemType.line,
+      GuideItemType.way,
+      GuideItemType.stn,
+      GuideItemType.oth,
+      GuideItemType.sub,
+      GuideItemType.cls,
+      GuideItemType.clss,
+    },
+    'guangzhou': {GuideItemType.line, GuideItemType.clss},
+    'mtr': {GuideItemType.line, GuideItemType.clss},
+    'jr': {GuideItemType.line, GuideItemType.clss},
+  };
+
+  static Set<GuideItemType> nativeBuiltInTypes(String city) {
+    return _nativeBuiltInTypes[city] ?? _nativeBuiltInTypes['shanghai']!;
+  }
+
+  static bool hasNativeBuiltInType(String city, GuideItemType type) {
+    return nativeBuiltInTypes(city).contains(type);
+  }
+
+  static String builtInCoverageLabel(String city) {
+    final count = nativeBuiltInTypes(city).length;
+    final total = GuideItemAssets.orderedTypes.length;
+    return 'Native $count/$total';
   }
 }
 

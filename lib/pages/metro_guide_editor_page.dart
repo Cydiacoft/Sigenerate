@@ -1332,6 +1332,23 @@ class _MetroGuideEditorPageState extends State<MetroGuideEditorPage> {
           ),
           const SizedBox(width: 12),
           _buildCitySelector(),
+          const SizedBox(width: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            ),
+            child: Text(
+              MetroCityAssetProfiles.builtInCoverageLabel(_selectedCity.name),
+              style: const TextStyle(
+                fontSize: 11,
+                color: Colors.white70,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
           const Spacer(),
           _buildToolbarButton(
             icon: Icons.undo,

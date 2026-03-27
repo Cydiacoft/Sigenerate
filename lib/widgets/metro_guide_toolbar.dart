@@ -47,24 +47,49 @@ class MetroGuideToolbar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: [
                 for (final type in GuideItemAssets.orderedTypes)
-                  _CategoryPanel(
-                    type: type,
-                    onAddItem: onAddItem,
-                    onAddText: onAddText,
-                    onAddColorBand: onAddColorBand,
-                    onAddCustomLine: onAddCustomLine,
-                    onImportCustomElement: onImportCustomElement,
-                    onDeleteCustomItem: onDeleteCustomItem,
-                    customItems: customItems[type] ?? const [],
-                    assetItems: groupedItems[type] ?? const [],
-                    city: city,
-                  ),
+                  if (_shouldShowCategory(
+                    type,
+                    groupedItems[type] ?? const [],
+                    customItems[type] ?? const [],
+                  ))
+                    _CategoryPanel(
+                      type: type,
+                      onAddItem: onAddItem,
+                      onAddText: onAddText,
+                      onAddColorBand: onAddColorBand,
+                      onAddCustomLine: onAddCustomLine,
+                      onImportCustomElement: onImportCustomElement,
+                      onDeleteCustomItem: onDeleteCustomItem,
+                      customItems: customItems[type] ?? const [],
+                      assetItems: groupedItems[type] ?? const [],
+                      city: city,
+                    ),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  bool _shouldShowCategory(
+    GuideItemType type,
+    List<String> assetItems,
+    List<MetroGuideItem> customTypeItems,
+  ) {
+    if (assetItems.isNotEmpty || customTypeItems.isNotEmpty) {
+      return true;
+    }
+
+    if (type == GuideItemType.line || type == GuideItemType.clss) {
+      return onAddCustomLine != null;
+    }
+
+    if (type == GuideItemType.oth || type == GuideItemType.clss) {
+      return onImportCustomElement != null;
+    }
+
+    return false;
   }
 
   Widget _buildHeader() {

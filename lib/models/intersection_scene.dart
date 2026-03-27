@@ -4,47 +4,78 @@ enum RoadType { general, highway, scenic }
 
 enum DestinationType { general, highway, scenic }
 
+enum DirectionWordMode { chinese, english, custom }
+
 enum IntersectionShape {
   crossroad,
   skewLeft,
   skewRight,
+  skewForwardLeft,
+  skewForwardRight,
   roundabout,
   tJunctionFrontLeft,
   tJunctionFrontRight,
   tJunctionLeftRight,
   yJunction,
-  diamondBridgeTop,
-  diamondBridgeBottom,
+  diamondBridgeHighTop,
+  diamondBridgeHighBottom,
+  diamondBridgeLowTop,
+  diamondBridgeLowBottom,
+  cloverleafBridgeDoubleTop,
+  cloverleafBridgeDoubleBottom,
+  cloverleafBridgeSingleTop,
+  cloverleafBridgeSingleBottom,
+  spiralBridgeDoubleTop,
+  spiralBridgeDoubleBottom,
+  spiralBridgeSingleTop,
+  spiralBridgeSingleBottom,
+  roundaboutBridgeTop,
+  roundaboutBridgeBottom,
+  leftLongRightShort,
+  rightLongLeftShort,
+  leftRightLongFrontShort,
 }
 
 class DirectionInfo {
   DirectionInfo({
     this.roadName = '',
+    this.roadNameEn = '',
     this.roadType = RoadType.general,
     this.destination = '',
+    this.destinationEn = '',
     this.destinationType = DestinationType.general,
     this.signIds = const [],
+    this.customDirection = '',
   });
 
   final String roadName;
+  final String roadNameEn;
   final RoadType roadType;
   final String destination;
+  final String destinationEn;
   final DestinationType destinationType;
   final List<String> signIds;
+  final String customDirection;
 
   DirectionInfo copyWith({
     String? roadName,
+    String? roadNameEn,
     RoadType? roadType,
     String? destination,
+    String? destinationEn,
     DestinationType? destinationType,
     List<String>? signIds,
+    String? customDirection,
   }) {
     return DirectionInfo(
       roadName: roadName ?? this.roadName,
+      roadNameEn: roadNameEn ?? this.roadNameEn,
       roadType: roadType ?? this.roadType,
       destination: destination ?? this.destination,
+      destinationEn: destinationEn ?? this.destinationEn,
       destinationType: destinationType ?? this.destinationType,
       signIds: signIds ?? List<String>.from(this.signIds),
+      customDirection: customDirection ?? this.customDirection,
     );
   }
 }
@@ -57,12 +88,12 @@ class IntersectionScene {
     DirectionInfo? east,
     DirectionInfo? south,
     DirectionInfo? west,
-    this.backgroundColor = const Color(0xFF1A5FB4),
-    this.scenicColor = const Color(0xFF8C5A2B),
+    this.backgroundColor = const Color(0xFF0055AA),
+    this.scenicColor = const Color(0xFF8B6914),
     this.foregroundColor = const Color(0xFFFFFFFF),
-    this.highwayColor = const Color(0xFF0E8A4B),
-    this.useChineseDirection = true,
-    this.useEnglishDirection = false,
+    this.highwayColor = const Color(0xFF006838),
+    this.directionWordMode = DirectionWordMode.chinese,
+    this.customDirectionWords = const {'north': 'N', 'east': 'E', 'south': 'S', 'west': 'W'},
   }) : north = north ?? DirectionInfo(),
        east = east ?? DirectionInfo(),
        south = south ?? DirectionInfo(),
@@ -78,8 +109,8 @@ class IntersectionScene {
   final Color scenicColor;
   final Color foregroundColor;
   final Color highwayColor;
-  final bool useChineseDirection;
-  final bool useEnglishDirection;
+  final DirectionWordMode directionWordMode;
+  final Map<String, String> customDirectionWords;
 
   IntersectionScene copyWith({
     String? name,
@@ -92,8 +123,8 @@ class IntersectionScene {
     Color? scenicColor,
     Color? foregroundColor,
     Color? highwayColor,
-    bool? useChineseDirection,
-    bool? useEnglishDirection,
+    DirectionWordMode? directionWordMode,
+    Map<String, String>? customDirectionWords,
   }) {
     return IntersectionScene(
       name: name ?? this.name,
@@ -106,8 +137,8 @@ class IntersectionScene {
       scenicColor: scenicColor ?? this.scenicColor,
       foregroundColor: foregroundColor ?? this.foregroundColor,
       highwayColor: highwayColor ?? this.highwayColor,
-      useChineseDirection: useChineseDirection ?? this.useChineseDirection,
-      useEnglishDirection: useEnglishDirection ?? this.useEnglishDirection,
+      directionWordMode: directionWordMode ?? this.directionWordMode,
+      customDirectionWords: customDirectionWords ?? this.customDirectionWords,
     );
   }
 

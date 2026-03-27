@@ -9,10 +9,11 @@ class MetroGuideSvgUtils {
   static final Map<String, Future<String>> _svgCache = {};
 
   static String assetPath(String fileName, [MetroCityStyle? city]) {
-    if (city == null || city == MetroCityStyle.shanghai) {
+    final scopedCity = _resolveAssetCity(fileName, city);
+    if (scopedCity == null || scopedCity == MetroCityStyle.shanghai) {
       return '$assetDirectory/$fileName';
     }
-    return '$assetDirectory/${city.name}/$fileName';
+    return '$assetDirectory/${scopedCity.name}/$fileName';
   }
 
   static String getCityAssetDirectory(MetroCityStyle city) {
@@ -23,10 +24,7 @@ class MetroGuideSvgUtils {
   }
 
   static Future<String> loadSvg(String fileName, [MetroCityStyle? city]) {
-    final resolvedPath = assetPath(
-      fileName,
-      city ?? _inferCityFromFileName(fileName),
-    );
+    final resolvedPath = assetPath(fileName, city);
     return _svgCache.putIfAbsent(
       resolvedPath,
       () => rootBundle.loadString(resolvedPath),
@@ -91,6 +89,23 @@ class MetroGuideSvgUtils {
       return MetroCityStyle.jr;
     }
     return null;
+  }
+
+  static MetroCityStyle? _resolveAssetCity(
+    String fileName,
+    MetroCityStyle? requestedCity,
+  ) {
+    final inferredCity = _inferCityFromFileName(fileName);
+    if (inferredCity != null) {
+      return inferredCity;
+    }
+
+    // Shared root assets such as way/stn/oth/sub/cls stay in the base folder.
+    if (fileName.contains('@')) {
+      return requestedCity == MetroCityStyle.shanghai ? requestedCity : null;
+    }
+
+    return requestedCity;
   }
 
   static String buildCustomLineSvg(MetroGuideItem item) {
