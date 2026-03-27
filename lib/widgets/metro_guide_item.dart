@@ -67,7 +67,15 @@ class MetroGuideItemWidget extends StatelessWidget {
 
     if (item.customUrl != null &&
         item.customUrl!.toLowerCase().endsWith('.svg')) {
-      return SvgPicture.file(File(item.customUrl!), fit: BoxFit.contain);
+      return FutureBuilder<String>(
+        future: _loadSvgFile(item.customUrl!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return SvgPicture.string(snapshot.data!, fit: BoxFit.contain);
+          }
+          return const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2));
+        },
+      );
     }
 
     if (item.customColor != null) {
@@ -198,5 +206,15 @@ class MetroGuideItemWidget extends StatelessWidget {
     } catch (_) {
       return const Color(0xFF001D31);
     }
+  }
+
+  static Future<String> _loadSvgFile(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        return await file.readAsString();
+      }
+    } catch (_) {}
+    return '';
   }
 }

@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -75,14 +75,18 @@ class MetroGuideToolbarItem extends StatelessWidget {
 
     if (item?.customUrl != null &&
         item!.customUrl!.toLowerCase().endsWith('.svg')) {
-      return SvgPicture.file(
-        File(item!.customUrl!),
-        fit: BoxFit.contain,
-        placeholderBuilder: (_) => const SizedBox(
-          width: 18,
-          height: 18,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
+      return FutureBuilder<String>(
+        future: _loadSvgContent(item!.customUrl!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            return SvgPicture.string(snapshot.data!, fit: BoxFit.contain);
+          }
+          return const SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        },
       );
     }
 
@@ -101,5 +105,15 @@ class MetroGuideToolbarItem extends StatelessWidget {
   bool _isCustomLine(MetroGuideItem guideItem) {
     return guideItem.fileName == 'line@custom.svg' ||
         guideItem.fileName == 'clss@custom.svg';
+  }
+
+  static Future<String> _loadSvgContent(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        return await file.readAsString();
+      }
+    } catch (_) {}
+    return '';
   }
 }
