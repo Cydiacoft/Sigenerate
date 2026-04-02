@@ -1220,6 +1220,8 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                                                   .withValues(
                                                     alpha: _boardOpacity,
                                                   ),
+                                              backgroundSvgAsset:
+                                                  _template.backgroundSvgAsset,
                                               headerColor:
                                                   _template.headerColor,
                                               headerRatio:
@@ -1472,6 +1474,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
             backgroundColor: _scene.backgroundColor.withValues(
               alpha: _boardOpacity,
             ),
+            backgroundSvgAsset: _template.backgroundSvgAsset,
             borderColor: _scene.foregroundColor,
             borderWidth: 2,
             nodes: _boards['north']!,
@@ -1933,6 +1936,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
                   backgroundColor: _scene.backgroundColor.withValues(
                     alpha: _boardOpacity,
                   ),
+                  backgroundSvgAsset: _template.backgroundSvgAsset,
                   headerColor: _template.headerColor,
                   headerRatio: _template.headerRatio,
                   borderColor: _scene.foregroundColor,
