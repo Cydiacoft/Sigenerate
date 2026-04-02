@@ -1,0 +1,86 @@
+priority,complexity_level,complexity_score,semantic_category,code_num,localFile,title,node_count,path_count,total_path_cmds,file_size_bytes
+1,复杂,834.152,导向与方向信息,3,China_road_sign_路_3b.svg,File:China road sign 路 3b.svg,87,36,1105,48598
+2,复杂,688.456,线路与出入口信息,47,China_road_sign_路_47b.svg,File:China road sign 路 47b.svg,65,43,826,52741
+3,复杂,656.987,线路与出入口信息,47,China_road_sign_路_47c.svg,File:China road sign 路 47c.svg,66,40,796,46295
+4,复杂,507.09,导向与方向信息,1,China_road_sign_路_1a.svg,File:China road sign 路 1a.svg,44,26,653,34272
+5,复杂,484.387,导向与方向信息,4,China_road_sign_路_4b.svg,File:China road sign 路 4b.svg,48,29,591,41616
+6,复杂,484.081,线路与出入口信息,46,China_road_sign_路_46b.svg,File:China road sign 路 46b.svg,40,28,627,29744
+7,复杂,475.12,导向与方向信息,3,China_road_sign_路_3a.svg,File:China road sign 路 3a.svg,23,21,661,33559
+8,复杂,434.153,导向与方向信息,2,China_road_sign_路_2a.svg,File:China road sign 路 2a.svg,49,23,534,30406
+9,复杂,422.378,旅游与区域信息,77,China_road_sign_路_77c.svg,File:China road sign 路 77c.svg,41,15,574,29799
+10,复杂,413.464,导向与方向信息,4,China_road_sign_路_4a.svg,File:China road sign 路 4a.svg,36,20,545,27290
+11,复杂,409.221,距离与里程信息,16,China_road_sign_路_16.svg,File:China road sign 路 16.svg,64,25,467,27437
+12,复杂,400.802,旅游与区域信息,77,China_road_sign_路_77a.svg,File:China road sign 路 77a.svg,35,14,555,27880
+13,复杂,398.317,旅游与区域信息,77,China_road_sign_路_77b.svg,File:China road sign 路 77b.svg,35,14,553,27213
+14,复杂,383.321,距离与里程信息,15,China_road_sign_路_15.svg,File:China road sign 路 15.svg,62,23,415,29685
+15,复杂,367.623,旅游与区域信息,77,China_road_sign_路_77d.svg,File:China road sign 路 77d.svg,30,12,517,25916
+16,复杂,337.343,线路与出入口信息,46,China_road_sign_路_46a.svg,File:China road sign 路 46a.svg,24,20,435,21353
+17,复杂,327.819,车道与通行方式信息,67,China_road_sign_路_67c.svg,File:China road sign 路 67c.svg,36,17,396,28487
+18,复杂,318.058,车道与通行方式信息,67,China_road_sign_路_67a.svg,File:China road sign 路 67a.svg,35,16,390,27109
+19,复杂,317.14,车道与通行方式信息,67,China_road_sign_路_67b.svg,File:China road sign 路 67b.svg,35,16,391,26469
+20,复杂,291.344,线路与出入口信息,55,China_road_sign_路_55.svg,File:China road sign 路 55.svg,37,13,360,22741
+21,复杂,287.013,车道与通行方式信息,67,China_road_sign_路_67d.svg,File:China road sign 路 67d.svg,36,13,354,24943
+22,复杂,279.425,旅游与区域信息,76,China_road_sign_路_76b.svg,File:China road sign 路 76b.svg,25,12,373,20507
+23,复杂,269.133,线路与出入口信息,54,China_road_sign_路_54a.svg,File:China road sign 路 54a.svg,24,17,334,19266
+24,复杂,266.005,旅游与区域信息,76,China_road_sign_路_76a.svg,File:China road sign 路 76a.svg,23,11,357,20145
+25,复杂,258.011,距离与里程信息,18,China_road_sign_路_18.svg,File:China road sign 路 18.svg,35,14,305,19886
+26,复杂,245.567,线路与出入口信息,56,China_road_sign_路_56b.svg,File:China road sign 路 56b.svg,21,15,312,17276
+27,复杂,244.911,车道与通行方式信息,61,China_road_sign_路_61a.svg,File:China road sign 路 61a.svg,15,11,333,18995
+28,复杂,244.525,线路与出入口信息,53,China_road_sign_路_53b.svg,File:China road sign 路 53b.svg,20,15,312,17065
+29,复杂,232.623,线路与出入口信息,56,China_road_sign_路_56a.svg,File:China road sign 路 56a.svg,19,14,297,17014
+30,中等,229.878,车道与通行方式信息,61,China_road_sign_路_61b.svg,File:China road sign 路 61b.svg,17,13,292,18089
+31,中等,226.445,线路与出入口信息,53,China_road_sign_路_53a.svg,File:China road sign 路 53a.svg,18,13,293,16843
+32,中等,215.404,线路与出入口信息,47,China_road_sign_路_47a.svg,File:China road sign 路 47a.svg,31,11,252,18002
+33,中等,202.081,旅游与区域信息,76,China_road_sign_路_76d.svg,File:China road sign 路 76d.svg,13,9,275,16134
+34,中等,192.64,车道与通行方式信息,66,China_road_sign_路_66c.svg,File:China road sign 路 66c.svg,24,10,234,15710
+35,中等,188.914,车道与通行方式信息,65,China_road_sign_路_65a.svg,File:China road sign 路 65a.svg,24,10,222,16710
+36,中等,187.305,车道与通行方式信息,66,China_road_sign_路_66b.svg,File:China road sign 路 66b.svg,28,9,230,14087
+37,中等,187.245,车道与通行方式信息,66,China_road_sign_路_66a.svg,File:China road sign 路 66a.svg,26,9,231,14545
+38,中等,183.377,车道与通行方式信息,62,China_road_sign_路_62a.svg,File:China road sign 路 62a.svg,29,18,172,15334
+39,中等,176.633,车道与通行方式信息,65,China_road_sign_路_65b.svg,File:China road sign 路 65b.svg,22,9,211,15716
+40,中等,173.248,车道与通行方式信息,60,China_road_sign_路_60.svg,File:China road sign 路 60.svg,23,10,206,14812
+41,中等,161.22,线路与出入口信息,56,China_road_sign_路_56-2.svg,File:China road sign 路 56-2.svg,14,8,217,11699
+42,中等,159.597,线路与出入口信息,53,China_road_sign_路_53-2.svg,File:China road sign 路 53-2.svg,12,8,218,11344
+43,中等,158.826,车道与通行方式信息,62,China_road_sign_路_62b.svg,File:China road sign 路 62b.svg,25,14,157,14542
+44,中等,156.749,旅游与区域信息,76,China_road_sign_路_76c.svg,File:China road sign 路 76c.svg,12,8,205,13095
+45,中等,151.352,距离与里程信息,20,China_road_sign_路_20a.svg,File:China road sign 路 20a.svg,11,7,205,12382
+46,中等,149.914,距离与里程信息,17,China_road_sign_路_17b.svg,File:China road sign 路 17b.svg,16,6,205,11171
+47,中等,144.688,车道与通行方式信息,66,China_road_sign_路_66d.svg,File:China road sign 路 66d.svg,16,6,192,11759
+48,中等,143.959,距离与里程信息,20,China_road_sign_路_20b.svg,File:China road sign 路 20b.svg,11,7,193,11753
+49,中等,130.626,距离与里程信息,17,China_road_sign_路_17c.svg,File:China road sign 路 17c.svg,16,6,163,11950
+50,中等,128.734,旅游与区域信息,74,China_road_sign_路_74a.svg,File:China road sign 路 74a.svg,13,9,157,9682
+51,中等,119.567,线路与出入口信息,45,China_road_sign_路_45.svg,File:China road sign 路 45.svg,11,7,152,9985
+52,中等,117.911,线路与出入口信息,49,China_road_sign_路_49b.svg,File:China road sign 路 49b.svg,14,8,136,10457
+53,中等,108.619,距离与里程信息,17,China_road_sign_路_17a.svg,File:China road sign 路 17a.svg,16,6,129,9665
+54,中等,106.765,距离与里程信息,19,China_road_sign_路_19.svg,File:China road sign 路 19.svg,10,6,133,10177
+55,中等,105.227,服务与设施信息,35,China_road_sign_路_35b.svg,File:China road sign 路 35b.svg,15,8,102,9603
+56,中等,104.264,服务与设施信息,35,China_road_sign_路_35a.svg,File:China road sign 路 35a.svg,15,8,100,9620
+57,中等,104.192,线路与出入口信息,49,China_road_sign_路_49a.svg,File:China road sign 路 49a.svg,14,8,113,9471
+58,简单,103.242,旅游与区域信息,74,China_road_sign_路_74c.svg,File:China road sign 路 74c.svg,11,7,125,8712
+59,简单,102.715,旅游与区域信息,74,China_road_sign_路_74b.svg,File:China road sign 路 74b.svg,11,7,125,8474
+60,简单,98.73,距离与里程信息,24,China_road_sign_路_24.svg,File:China road sign 路 24.svg,12,6,122,10632
+61,简单,93.295,距离与里程信息,21,China_road_sign_路_21a.svg,File:China road sign 路 21a.svg,18,5,106,8555
+62,简单,91.411,导向与方向信息,9,China_road_sign_路_9a.svg,File:China road sign 路 9a.svg,14,6,105,7996
+63,简单,89.966,导向与方向信息,9,China_road_sign_路_9b.svg,File:China road sign 路 9b.svg,14,6,99,8719
+64,简单,88.007,车道与通行方式信息,61,China_road_sign_路_61e.svg,File:China road sign 路 61e.svg,15,7,86,9123
+65,简单,78.447,车道与通行方式信息,61,China_road_sign_路_61d.svg,File:China road sign 路 61d.svg,12,6,80,8575
+66,简单,75.822,服务与设施信息,25,China_road_sign_路_25.svg,File:China road sign 路 25.svg,12,6,79,10041
+67,简单,72.882,旅游与区域信息,79,China_road_sign_路_79.svg,File:China road sign 路 79.svg,11,5,83,7042
+68,简单,67.328,车道与通行方式信息,61,China_road_sign_路_61c.svg,File:China road sign 路 61c.svg,12,5,67,7841
+69,简单,61.693,旅游与区域信息,75,China_road_sign_路_75b.svg,File:China road sign 路 75b.svg,9,5,66,6646
+70,简单,61.647,距离与里程信息,22,China_road_sign_路_22b.svg,File:China road sign 路 22b.svg,9,5,66,6626
+71,简单,60.075,服务与设施信息,37,China_road_sign_路_37c_(Blue_and_white).svg,File:China road sign 路 37c (Blue and white).svg,11,6,55,5143
+72,简单,60.075,服务与设施信息,37,China_road_sign_路_37c_(Green_and_white).svg,File:China road sign 路 37c (Green and white).svg,11,6,55,5143
+73,简单,54.643,距离与里程信息,22,China_road_sign_路_22a.svg,File:China road sign 路 22a.svg,8,4,60,6534
+74,简单,54.643,旅游与区域信息,75,China_road_sign_路_75a.svg,File:China road sign 路 75a.svg,8,4,60,6534
+75,简单,50.43,服务与设施信息,26,China_road_sign_路_26.svg,File:China road sign 路 26.svg,10,4,50,2719
+76,简单,49.399,服务与设施信息,34,China_road_sign_路_34.svg,File:China road sign 路 34.svg,9,4,47,3393
+77,简单,44.03,服务与设施信息,31,China_road_sign_路_31.svg,File:China road sign 路 31.svg,9,3,45,6159
+78,简单,43.972,服务与设施信息,37,China_road_sign_路_37a2_(Blue_and_white).svg,File:China road sign 路 37a2 (Blue and white).svg,9,4,40,4650
+79,简单,43.972,服务与设施信息,37,China_road_sign_路_37a2_(Green_and_white).svg,File:China road sign 路 37a2 (Green and white).svg,9,4,40,4650
+80,简单,43.919,服务与设施信息,37,China_road_sign_路_37b2_(Blue_and_white).svg,File:China road sign 路 37b2 (Blue and white).svg,9,4,40,4626
+81,简单,43.919,服务与设施信息,37,China_road_sign_路_37b2_(Green_and_white).svg,File:China road sign 路 37b2 (Green and white).svg,9,4,40,4626
+82,简单,36.713,服务与设施信息,36,China_road_sign_路_36a_(Blue_and_white).svg,File:China road sign 路 36a (Blue and white).svg,8,3,34,4384
+83,简单,36.713,服务与设施信息,36,China_road_sign_路_36a_(Green_and_white).svg,File:China road sign 路 36a (Green and white).svg,8,3,34,4384
+84,简单,36.706,服务与设施信息,36,China_road_sign_路_36b_(Blue_and_white).svg,File:China road sign 路 36b (Blue and white).svg,8,3,34,4381
+85,简单,36.706,服务与设施信息,36,China_road_sign_路_36b_(Green_and_white).svg,File:China road sign 路 36b (Green and white).svg,8,3,34,4381

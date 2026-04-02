@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'core/core_registry.dart';
 import 'pages/metro_guide_editor_page.dart';
 import 'pages/road_editor_page.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await CoreRegistry.instance.initialize();
   runApp(const TrafficSignApp());
 }
 

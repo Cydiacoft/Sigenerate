@@ -63,6 +63,13 @@ flutter:
   assets:
     - assets/metro_guide/
     - assets/road_signs/
+    - assets/road_signs_info/svg/
+    - core_assets/palettes/colors.json
+    - core_standards/road_gb_5768_2_2022/layout.json
+    - core_standards/road_gb_5768_2_2022/typography.json
+    - core_standards/road_gb_5768_2_2022/templates.json
+    - core_canvas_model/rules/layout_rules.json
+    - core_canvas_model/rules/export_rules.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

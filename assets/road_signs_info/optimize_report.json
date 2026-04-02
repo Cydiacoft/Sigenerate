@@ -1,0 +1,690 @@
+{
+  "count": 85,
+  "failed_count": 0,
+  "total_before_bytes": 1512687,
+  "total_after_bytes": 1358733,
+  "total_delta_bytes": -153954,
+  "results": [
+    {
+      "file": "China_road_sign_路_15.svg",
+      "before_bytes": 32560,
+      "after_bytes": 29685,
+      "delta_bytes": -2875,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_16.svg",
+      "before_bytes": 30727,
+      "after_bytes": 27437,
+      "delta_bytes": -3290,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_17a.svg",
+      "before_bytes": 11287,
+      "after_bytes": 9665,
+      "delta_bytes": -1622,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_17b.svg",
+      "before_bytes": 12758,
+      "after_bytes": 11171,
+      "delta_bytes": -1587,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_17c.svg",
+      "before_bytes": 13572,
+      "after_bytes": 11950,
+      "delta_bytes": -1622,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_18.svg",
+      "before_bytes": 21956,
+      "after_bytes": 19886,
+      "delta_bytes": -2070,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_19.svg",
+      "before_bytes": 11584,
+      "after_bytes": 10177,
+      "delta_bytes": -1407,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_1a.svg",
+      "before_bytes": 36619,
+      "after_bytes": 34272,
+      "delta_bytes": -2347,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_20a.svg",
+      "before_bytes": 13810,
+      "after_bytes": 12382,
+      "delta_bytes": -1428,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_20b.svg",
+      "before_bytes": 13180,
+      "after_bytes": 11753,
+      "delta_bytes": -1427,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_21a.svg",
+      "before_bytes": 10317,
+      "after_bytes": 8555,
+      "delta_bytes": -1762,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_22a.svg",
+      "before_bytes": 7899,
+      "after_bytes": 6534,
+      "delta_bytes": -1365,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_22b.svg",
+      "before_bytes": 8087,
+      "after_bytes": 6626,
+      "delta_bytes": -1461,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_24.svg",
+      "before_bytes": 12337,
+      "after_bytes": 10632,
+      "delta_bytes": -1705,
+      "removed_attrs": 25,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_25.svg",
+      "before_bytes": 11786,
+      "after_bytes": 10041,
+      "delta_bytes": -1745,
+      "removed_attrs": 26,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_26.svg",
+      "before_bytes": 4582,
+      "after_bytes": 2719,
+      "delta_bytes": -1863,
+      "removed_attrs": 30,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_2a.svg",
+      "before_bytes": 32791,
+      "after_bytes": 30406,
+      "delta_bytes": -2385,
+      "removed_attrs": 17,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_31.svg",
+      "before_bytes": 7810,
+      "after_bytes": 6159,
+      "delta_bytes": -1651,
+      "removed_attrs": 25,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_34.svg",
+      "before_bytes": 4749,
+      "after_bytes": 3393,
+      "delta_bytes": -1356,
+      "removed_attrs": 17,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_35a.svg",
+      "before_bytes": 11263,
+      "after_bytes": 9620,
+      "delta_bytes": -1643,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_35b.svg",
+      "before_bytes": 11246,
+      "after_bytes": 9603,
+      "delta_bytes": -1643,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_36a_(Blue_and_white).svg",
+      "before_bytes": 5777,
+      "after_bytes": 4384,
+      "delta_bytes": -1393,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_36a_(Green_and_white).svg",
+      "before_bytes": 5789,
+      "after_bytes": 4384,
+      "delta_bytes": -1405,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_36b_(Blue_and_white).svg",
+      "before_bytes": 5775,
+      "after_bytes": 4381,
+      "delta_bytes": -1394,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_36b_(Green_and_white).svg",
+      "before_bytes": 5796,
+      "after_bytes": 4381,
+      "delta_bytes": -1415,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_37a2_(Blue_and_white).svg",
+      "before_bytes": 6398,
+      "after_bytes": 4650,
+      "delta_bytes": -1748,
+      "removed_attrs": 28,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_37a2_(Green_and_white).svg",
+      "before_bytes": 6399,
+      "after_bytes": 4650,
+      "delta_bytes": -1749,
+      "removed_attrs": 28,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_37b2_(Blue_and_white).svg",
+      "before_bytes": 6379,
+      "after_bytes": 4626,
+      "delta_bytes": -1753,
+      "removed_attrs": 28,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_37b2_(Green_and_white).svg",
+      "before_bytes": 6380,
+      "after_bytes": 4626,
+      "delta_bytes": -1754,
+      "removed_attrs": 28,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_37c_(Blue_and_white).svg",
+      "before_bytes": 7019,
+      "after_bytes": 5143,
+      "delta_bytes": -1876,
+      "removed_attrs": 30,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_37c_(Green_and_white).svg",
+      "before_bytes": 7020,
+      "after_bytes": 5143,
+      "delta_bytes": -1877,
+      "removed_attrs": 30,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_3a.svg",
+      "before_bytes": 33553,
+      "after_bytes": 33559,
+      "delta_bytes": 6,
+      "removed_attrs": 0,
+      "removed_nodes": 0
+    },
+    {
+      "file": "China_road_sign_路_3b.svg",
+      "before_bytes": 52340,
+      "after_bytes": 48598,
+      "delta_bytes": -3742,
+      "removed_attrs": 23,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_45.svg",
+      "before_bytes": 11414,
+      "after_bytes": 9985,
+      "delta_bytes": -1429,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_46a.svg",
+      "before_bytes": 22969,
+      "after_bytes": 21353,
+      "delta_bytes": -1616,
+      "removed_attrs": 16,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_46b.svg",
+      "before_bytes": 31918,
+      "after_bytes": 29744,
+      "delta_bytes": -2174,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_47a.svg",
+      "before_bytes": 19956,
+      "after_bytes": 18002,
+      "delta_bytes": -1954,
+      "removed_attrs": 17,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_47b.svg",
+      "before_bytes": 55592,
+      "after_bytes": 52741,
+      "delta_bytes": -2851,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_47c.svg",
+      "before_bytes": 49149,
+      "after_bytes": 46295,
+      "delta_bytes": -2854,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_49a.svg",
+      "before_bytes": 11117,
+      "after_bytes": 9471,
+      "delta_bytes": -1646,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_49b.svg",
+      "before_bytes": 11977,
+      "after_bytes": 10457,
+      "delta_bytes": -1520,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_4a.svg",
+      "before_bytes": 29490,
+      "after_bytes": 27290,
+      "delta_bytes": -2200,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_4b.svg",
+      "before_bytes": 44810,
+      "after_bytes": 41616,
+      "delta_bytes": -3194,
+      "removed_attrs": 36,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_53-2.svg",
+      "before_bytes": 12754,
+      "after_bytes": 11344,
+      "delta_bytes": -1410,
+      "removed_attrs": 17,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_53a.svg",
+      "before_bytes": 18550,
+      "after_bytes": 16843,
+      "delta_bytes": -1707,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_53b.svg",
+      "before_bytes": 18814,
+      "after_bytes": 17065,
+      "delta_bytes": -1749,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_54a.svg",
+      "before_bytes": 21073,
+      "after_bytes": 19266,
+      "delta_bytes": -1807,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_55.svg",
+      "before_bytes": 24833,
+      "after_bytes": 22741,
+      "delta_bytes": -2092,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_56-2.svg",
+      "before_bytes": 13203,
+      "after_bytes": 11699,
+      "delta_bytes": -1504,
+      "removed_attrs": 17,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_56a.svg",
+      "before_bytes": 18741,
+      "after_bytes": 17014,
+      "delta_bytes": -1727,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_56b.svg",
+      "before_bytes": 19083,
+      "after_bytes": 17276,
+      "delta_bytes": -1807,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_60.svg",
+      "before_bytes": 16605,
+      "after_bytes": 14812,
+      "delta_bytes": -1793,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_61a.svg",
+      "before_bytes": 20506,
+      "after_bytes": 18995,
+      "delta_bytes": -1511,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_61b.svg",
+      "before_bytes": 19641,
+      "after_bytes": 18089,
+      "delta_bytes": -1552,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_61c.svg",
+      "before_bytes": 9316,
+      "after_bytes": 7841,
+      "delta_bytes": -1475,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_61d.svg",
+      "before_bytes": 10038,
+      "after_bytes": 8575,
+      "delta_bytes": -1463,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_61e.svg",
+      "before_bytes": 10671,
+      "after_bytes": 9123,
+      "delta_bytes": -1548,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_62a.svg",
+      "before_bytes": 17331,
+      "after_bytes": 15334,
+      "delta_bytes": -1997,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_62b.svg",
+      "before_bytes": 16459,
+      "after_bytes": 14542,
+      "delta_bytes": -1917,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_65a.svg",
+      "before_bytes": 18496,
+      "after_bytes": 16710,
+      "delta_bytes": -1786,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_65b.svg",
+      "before_bytes": 17453,
+      "after_bytes": 15716,
+      "delta_bytes": -1737,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_66a.svg",
+      "before_bytes": 16446,
+      "after_bytes": 14545,
+      "delta_bytes": -1901,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_66b.svg",
+      "before_bytes": 16013,
+      "after_bytes": 14087,
+      "delta_bytes": -1926,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_66c.svg",
+      "before_bytes": 17568,
+      "after_bytes": 15710,
+      "delta_bytes": -1858,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_66d.svg",
+      "before_bytes": 13348,
+      "after_bytes": 11759,
+      "delta_bytes": -1589,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_67a.svg",
+      "before_bytes": 29193,
+      "after_bytes": 27109,
+      "delta_bytes": -2084,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_67b.svg",
+      "before_bytes": 28546,
+      "after_bytes": 26469,
+      "delta_bytes": -2077,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_67c.svg",
+      "before_bytes": 30593,
+      "after_bytes": 28487,
+      "delta_bytes": -2106,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_67d.svg",
+      "before_bytes": 27135,
+      "after_bytes": 24943,
+      "delta_bytes": -2192,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_74a.svg",
+      "before_bytes": 11167,
+      "after_bytes": 9682,
+      "delta_bytes": -1485,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_74b.svg",
+      "before_bytes": 9960,
+      "after_bytes": 8474,
+      "delta_bytes": -1486,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_74c.svg",
+      "before_bytes": 10233,
+      "after_bytes": 8712,
+      "delta_bytes": -1521,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_75a.svg",
+      "before_bytes": 7899,
+      "after_bytes": 6534,
+      "delta_bytes": -1365,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_75b.svg",
+      "before_bytes": 8068,
+      "after_bytes": 6646,
+      "delta_bytes": -1422,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_76a.svg",
+      "before_bytes": 21897,
+      "after_bytes": 20145,
+      "delta_bytes": -1752,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_76b.svg",
+      "before_bytes": 22359,
+      "after_bytes": 20507,
+      "delta_bytes": -1852,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_76c.svg",
+      "before_bytes": 14541,
+      "after_bytes": 13095,
+      "delta_bytes": -1446,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_76d.svg",
+      "before_bytes": 17605,
+      "after_bytes": 16134,
+      "delta_bytes": -1471,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_77a.svg",
+      "before_bytes": 30262,
+      "after_bytes": 27880,
+      "delta_bytes": -2382,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_77b.svg",
+      "before_bytes": 29598,
+      "after_bytes": 27213,
+      "delta_bytes": -2385,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_77c.svg",
+      "before_bytes": 32376,
+      "after_bytes": 29799,
+      "delta_bytes": -2577,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_77d.svg",
+      "before_bytes": 28061,
+      "after_bytes": 25916,
+      "delta_bytes": -2145,
+      "removed_attrs": 19,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_79.svg",
+      "before_bytes": 8548,
+      "after_bytes": 7042,
+      "delta_bytes": -1506,
+      "removed_attrs": 20,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_9a.svg",
+      "before_bytes": 9522,
+      "after_bytes": 7996,
+      "delta_bytes": -1526,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    },
+    {
+      "file": "China_road_sign_路_9b.svg",
+      "before_bytes": 10245,
+      "after_bytes": 8719,
+      "delta_bytes": -1526,
+      "removed_attrs": 18,
+      "removed_nodes": 1
+    }
+  ],
+  "failures": []
+}

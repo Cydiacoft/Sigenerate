@@ -16,6 +16,29 @@ class RoadBoardTemplateSpec {
   final Map<String, RoadBoardSlotSpec> slots;
   final Color? headerColor;
   final double? headerRatio;
+
+  factory RoadBoardTemplateSpec.fromJson(Map<String, dynamic> json) {
+    final canvas =
+        (json['canvasSize'] as Map?)?.cast<String, dynamic>() ??
+        const <String, dynamic>{};
+    final slotList = (json['slots'] as List?)?.cast<Map>() ?? const <Map>[];
+    final slots = <String, RoadBoardSlotSpec>{};
+    for (final raw in slotList) {
+      final slot = RoadBoardSlotSpec.fromJson(raw.cast<String, dynamic>());
+      slots[slot.id] = slot;
+    }
+    return RoadBoardTemplateSpec(
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      canvasSize: Size(
+        (canvas['width'] as num?)?.toDouble() ?? 0,
+        (canvas['height'] as num?)?.toDouble() ?? 0,
+      ),
+      slots: slots,
+      headerColor: _parseHexColor(json['headerColor'] as String?),
+      headerRatio: (json['headerRatio'] as num?)?.toDouble(),
+    );
+  }
 }
 
 class RoadBoardSlotSpec {
@@ -32,6 +55,24 @@ class RoadBoardSlotSpec {
   final double? fontSize;
   final bool useWhiteBox;
   final bool useScenicBorder;
+
+  factory RoadBoardSlotSpec.fromJson(Map<String, dynamic> json) {
+    final rect =
+        (json['rect'] as Map?)?.cast<String, dynamic>() ??
+        const <String, dynamic>{};
+    return RoadBoardSlotSpec(
+      id: (json['id'] ?? '').toString(),
+      rect: Rect.fromLTWH(
+        (rect['x'] as num?)?.toDouble() ?? 0,
+        (rect['y'] as num?)?.toDouble() ?? 0,
+        (rect['width'] as num?)?.toDouble() ?? 0,
+        (rect['height'] as num?)?.toDouble() ?? 0,
+      ),
+      fontSize: (json['fontSize'] as num?)?.toDouble(),
+      useWhiteBox: json['useWhiteBox'] == true,
+      useScenicBorder: json['useScenicBorder'] == true,
+    );
+  }
 }
 
 class RoadBoardTemplates {
@@ -233,14 +274,42 @@ class RoadBoardTemplates {
     },
   );
 
-  static const List<RoadBoardTemplateSpec> all = <RoadBoardTemplateSpec>[
-    standardCrossroad,
-    placeDistance,
-    serviceDistance,
-    serviceAdvance,
-    routeNumber,
-    freeCompose,
-  ];
+  static const List<RoadBoardTemplateSpec> _fallbackAll =
+      <RoadBoardTemplateSpec>[
+        standardCrossroad,
+        placeDistance,
+        serviceDistance,
+        serviceAdvance,
+        routeNumber,
+        freeCompose,
+      ];
+
+  static List<RoadBoardTemplateSpec> _runtimeAll = _fallbackAll;
+
+  static List<RoadBoardTemplateSpec> get all => _runtimeAll;
+
+  static void replaceAll(List<RoadBoardTemplateSpec> templates) {
+    if (templates.isEmpty) return;
+    _runtimeAll = templates;
+  }
+
+  static void resetToFallback() {
+    _runtimeAll = _fallbackAll;
+  }
+
+  static List<RoadBoardTemplateSpec> fromRegistryJson(
+    Map<String, dynamic> json,
+  ) {
+    final rawTemplates =
+        (json['templates'] as List?)?.cast<Map>() ?? const <Map>[];
+    final parsed = <RoadBoardTemplateSpec>[];
+    for (final raw in rawTemplates) {
+      final spec = RoadBoardTemplateSpec.fromJson(raw.cast<String, dynamic>());
+      if (spec.id.isEmpty || spec.slots.isEmpty) continue;
+      parsed.add(spec);
+    }
+    return parsed;
+  }
 
   static RoadBoardTemplateSpec? byId(String id) {
     for (final template in all) {
@@ -248,4 +317,16 @@ class RoadBoardTemplates {
     }
     return null;
   }
+}
+
+Color? _parseHexColor(String? hex) {
+  if (hex == null || hex.isEmpty) return null;
+  final cleaned = hex.replaceFirst('#', '').trim();
+  if (cleaned.length != 6 && cleaned.length != 8) return null;
+  final value = int.tryParse(
+    cleaned.length == 6 ? 'FF$cleaned' : cleaned,
+    radix: 16,
+  );
+  if (value == null) return null;
+  return Color(value);
 }

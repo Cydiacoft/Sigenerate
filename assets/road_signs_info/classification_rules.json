@@ -1,0 +1,35 @@
+{
+  "semantic_rules": [
+    {
+      "name": "导向与方向信息",
+      "min_code": 1,
+      "max_code": 14
+    },
+    {
+      "name": "距离与里程信息",
+      "min_code": 15,
+      "max_code": 24
+    },
+    {
+      "name": "服务与设施信息",
+      "min_code": 25,
+      "max_code": 39
+    },
+    {
+      "name": "线路与出入口信息",
+      "min_code": 45,
+      "max_code": 56
+    },
+    {
+      "name": "车道与通行方式信息",
+      "min_code": 60,
+      "max_code": 67
+    },
+    {
+      "name": "旅游与区域信息",
+      "min_code": 74,
+      "max_code": 79
+    }
+  ],
+  "fallback_semantic": "其他信息标志"
+}
