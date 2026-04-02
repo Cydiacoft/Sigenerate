@@ -151,8 +151,7 @@ class RoadBoardTemplates {
     id: placeDistanceId,
     name: 'Place Distance Board',
     canvasSize: Size(1020, 502),
-    backgroundSvgAsset:
-        'assets/road_signs_info/svg/China_road_sign_\u8def_17a.svg',
+    backgroundSvgAsset: 'assets/road_signs_info/svg/place_distance_17a.svg',
     slots: {
       'topCenter': RoadBoardSlotSpec(
         id: 'topCenter',
@@ -170,8 +169,7 @@ class RoadBoardTemplates {
         id: placeDistanceMultilineId,
         name: 'Place Distance Multi-line Board',
         canvasSize: Size(1020, 843),
-        backgroundSvgAsset:
-            'assets/road_signs_info/svg/China_road_sign_\u8def_16.svg',
+        backgroundSvgAsset: 'assets/road_signs_info/svg/place_distance_16.svg',
         slots: {
           'topCenter': RoadBoardSlotSpec(
             id: 'topCenter',

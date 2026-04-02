@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_svg/flutter_svg.dart';
 
 enum NodeType { text, whiteBox, graphic }
@@ -481,9 +482,18 @@ class RoadSignCanvas extends StatelessWidget {
                     resolvedBackgroundSvgAsset.isNotEmpty)
                   Positioned.fill(
                     child: IgnorePointer(
-                      child: SvgPicture.asset(
-                        resolvedBackgroundSvgAsset,
-                        fit: BoxFit.fill,
+                      child: _buildBackgroundSvg(resolvedBackgroundSvgAsset),
+                    ),
+                  ),
+                if (resolvedBackgroundSvgAsset != null &&
+                    _isPlaceDistanceTemplate(resolvedBackgroundSvgAsset))
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: CustomPaint(
+                        painter: _PlaceDistanceMaskPainter(
+                          nodes: nodes,
+                          fillColor: backgroundColor,
+                        ),
                       ),
                     ),
                   ),
@@ -576,8 +586,8 @@ class RoadSignCanvas extends StatelessWidget {
       final aspect = height == 0 ? 1.0 : width / height;
       // road_17a is wide (~2.03), road_16 is close to square (~1.21).
       return aspect > 1.6
-          ? 'assets/road_signs_info/svg/China_road_sign_\u8def_17a.svg'
-          : 'assets/road_signs_info/svg/China_road_sign_\u8def_16.svg';
+          ? 'assets/road_signs_info/svg/place_distance_17a.svg'
+          : 'assets/road_signs_info/svg/place_distance_16.svg';
     }
     final isRouteNumberBoard =
         ids.contains('item_route_header') &&
@@ -585,5 +595,91 @@ class RoadSignCanvas extends StatelessWidget {
         ids.contains('item_route_alias');
     if (!isRouteNumberBoard) return null;
     return 'assets/road_signs_prc/svg/China_Expressway_Sign_without_number.svg';
+  }
+
+  Widget _buildBackgroundSvg(String assetPath) {
+    final shouldTintPlaceDistance =
+        assetPath.contains('place_distance_17a.svg') ||
+        assetPath.contains('place_distance_16.svg');
+    return FutureBuilder<String>(
+      future: rootBundle.loadString(assetPath),
+      builder: (context, snapshot) {
+        final raw = snapshot.data;
+        if (raw == null) {
+          return SvgPicture.asset(assetPath, fit: BoxFit.fill);
+        }
+        final sanitized = _sanitizeSvg(raw);
+        if (!shouldTintPlaceDistance) {
+          return SvgPicture.string(sanitized, fit: BoxFit.fill);
+        }
+        final targetHex = _hexRgb(backgroundColor);
+        // Keep white text/graphics, retint only the template blue.
+        final tinted = sanitized
+            .replaceAll('#253898', targetHex)
+            .replaceAll('#253898;fill-opacity:1', '$targetHex;fill-opacity:1')
+            .replaceAll('#253898;', '$targetHex;');
+        return SvgPicture.string(tinted, fit: BoxFit.fill);
+      },
+    );
+  }
+
+  String _hexRgb(Color color) {
+    final r = color.r.toInt().toRadixString(16).padLeft(2, '0');
+    final g = color.g.toInt().toRadixString(16).padLeft(2, '0');
+    final b = color.b.toInt().toRadixString(16).padLeft(2, '0');
+    return '#${r.toUpperCase()}${g.toUpperCase()}${b.toUpperCase()}';
+  }
+
+  String _sanitizeSvg(String raw) {
+    var data = raw;
+    data = data.replaceAll(RegExp(r'<!DOCTYPE[^>]*>', multiLine: true), '');
+    data = data.replaceAll(
+      RegExp(r'<metadata[\s\S]*?</metadata>', caseSensitive: false),
+      '',
+    );
+    data = data.replaceAll(RegExp(r'\s+sodipodi:[\w-]+="[^"]*"'), '');
+    data = data.replaceAll(RegExp(r'\s+inkscape:[\w-]+="[^"]*"'), '');
+    return data;
+  }
+
+  bool _isPlaceDistanceTemplate(String assetPath) {
+    return assetPath.contains('place_distance_17a.svg') ||
+        assetPath.contains('place_distance_16.svg');
+  }
+}
+
+class _PlaceDistanceMaskPainter extends CustomPainter {
+  const _PlaceDistanceMaskPainter({
+    required this.nodes,
+    required this.fillColor,
+  });
+
+  final List<TextNode> nodes;
+  final Color fillColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = fillColor
+      ..style = PaintingStyle.fill;
+    for (final node in nodes) {
+      final isPlaceText =
+          node.id == 'item_place_name' ||
+          node.id == 'item_place_distance' ||
+          node.id == 'item_place_name_line2';
+      if (!isPlaceText) continue;
+      final rect = Rect.fromLTWH(
+        node.x - 2,
+        node.y - 2,
+        node.width + 4,
+        node.height + 4,
+      );
+      canvas.drawRect(rect, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PlaceDistanceMaskPainter oldDelegate) {
+    return oldDelegate.nodes != nodes || oldDelegate.fillColor != fillColor;
   }
 }
