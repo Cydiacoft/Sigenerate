@@ -93,7 +93,7 @@ class _RoadEditorPageState extends State<RoadEditorPage> {
   final Set<String> _serviceIcons = <String>{'P', 'Fuel', 'Food', 'Repair'};
   String _routeFontType = 'B型交通标志专用字体';
   String _routeRoadClass = '国家高速';
-  String _routeMainCode = 'G15';
+  String _routeMainCode = 'GXX';
   bool _routeHasBranch = true;
   String _routeBranchCode = 'W';
   bool _routeHasAlias = true;

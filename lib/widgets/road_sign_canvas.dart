@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 enum NodeType { text, whiteBox, graphic }
 
@@ -416,6 +417,7 @@ class RoadSignCanvas extends StatelessWidget {
     this.selectedNodeId,
     this.onNodeSelected,
     this.onNodeSecondaryTapDown,
+    this.backgroundSvgAsset,
     this.headerColor,
     this.headerRatio,
   });
@@ -432,11 +434,14 @@ class RoadSignCanvas extends StatelessWidget {
   final ValueChanged<String>? onNodeSelected;
   final void Function(TextNode node, Offset globalPosition)?
   onNodeSecondaryTapDown;
+  final String? backgroundSvgAsset;
   final Color? headerColor;
   final double? headerRatio;
 
   @override
   Widget build(BuildContext context) {
+    final resolvedBackgroundSvgAsset =
+        backgroundSvgAsset ?? _inferBackgroundSvgAsset(nodes);
     final validHeaderRatio =
         headerRatio != null && headerRatio! > 0 && headerRatio! < 1;
     final useGradient = headerColor != null && validHeaderRatio;
@@ -471,73 +476,85 @@ class RoadSignCanvas extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(2),
             child: Stack(
-              children: nodes.map((node) {
-                final isSelected = selectedNodeId == node.id;
-                final widget = node.nodeType == NodeType.graphic
-                    ? GraphicNode(node: node)
-                    : EditableTextNode(
-                        node: node,
-                        onChanged: (updated) => _replaceNode(updated),
-                      );
-                final hitPaddingX = node.nodeType == NodeType.graphic
-                    ? 14.0
-                    : 6.0;
-                final hitPaddingY = node.nodeType == NodeType.graphic
-                    ? 12.0
-                    : 6.0;
-                final hitWidth = node.width + hitPaddingX * 2;
-                final hitHeight = node.height + hitPaddingY * 2;
-                return Positioned(
-                  left: (node.x - hitPaddingX).clamp(0.0, width - hitWidth),
-                  top: (node.y - hitPaddingY).clamp(0.0, height - hitHeight),
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () => onNodeSelected?.call(node.id),
-                    onSecondaryTapDown: (details) {
-                      onNodeSelected?.call(node.id);
-                      onNodeSecondaryTapDown?.call(
-                        node,
-                        details.globalPosition,
-                      );
-                    },
-                    onPanUpdate: (details) {
-                      final maxX = width - node.width - 12;
-                      final maxY = height - node.height - 12;
-                      final dx = details.delta.dx / interactionScale;
-                      final dy = details.delta.dy / interactionScale;
-                      _replaceNode(
-                        node.copyWith(
-                          x: (node.x + dx).clamp(0.0, maxX),
-                          y: (node.y + dy).clamp(0.0, maxY),
-                        ),
-                      );
-                    },
-                    child: SizedBox(
-                      width: hitWidth,
-                      height: hitHeight,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          hitPaddingX,
-                          hitPaddingY,
-                          hitPaddingX,
-                          hitPaddingY,
-                        ),
-                        child: Container(
-                          decoration: isSelected
-                              ? BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.yellowAccent,
-                                    width: 2,
-                                  ),
-                                )
-                              : null,
-                          child: widget,
-                        ),
+              children: [
+                if (resolvedBackgroundSvgAsset != null &&
+                    resolvedBackgroundSvgAsset.isNotEmpty)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: SvgPicture.asset(
+                        resolvedBackgroundSvgAsset,
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
-                );
-              }).toList(),
+                ...nodes.map((node) {
+                  final isSelected = selectedNodeId == node.id;
+                  final widget = node.nodeType == NodeType.graphic
+                      ? GraphicNode(node: node)
+                      : EditableTextNode(
+                          node: node,
+                          onChanged: (updated) => _replaceNode(updated),
+                        );
+                  final hitPaddingX = node.nodeType == NodeType.graphic
+                      ? 14.0
+                      : 6.0;
+                  final hitPaddingY = node.nodeType == NodeType.graphic
+                      ? 12.0
+                      : 6.0;
+                  final hitWidth = node.width + hitPaddingX * 2;
+                  final hitHeight = node.height + hitPaddingY * 2;
+                  return Positioned(
+                    left: (node.x - hitPaddingX).clamp(0.0, width - hitWidth),
+                    top: (node.y - hitPaddingY).clamp(0.0, height - hitHeight),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => onNodeSelected?.call(node.id),
+                      onSecondaryTapDown: (details) {
+                        onNodeSelected?.call(node.id);
+                        onNodeSecondaryTapDown?.call(
+                          node,
+                          details.globalPosition,
+                        );
+                      },
+                      onPanUpdate: (details) {
+                        final maxX = width - node.width - 12;
+                        final maxY = height - node.height - 12;
+                        final dx = details.delta.dx / interactionScale;
+                        final dy = details.delta.dy / interactionScale;
+                        _replaceNode(
+                          node.copyWith(
+                            x: (node.x + dx).clamp(0.0, maxX),
+                            y: (node.y + dy).clamp(0.0, maxY),
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        width: hitWidth,
+                        height: hitHeight,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            hitPaddingX,
+                            hitPaddingY,
+                            hitPaddingX,
+                            hitPaddingY,
+                          ),
+                          child: Container(
+                            decoration: isSelected
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.yellowAccent,
+                                      width: 2,
+                                    ),
+                                  )
+                                : null,
+                            child: widget,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
         ),
@@ -549,5 +566,15 @@ class RoadSignCanvas extends StatelessWidget {
     onNodesChanged(
       nodes.map((node) => node.id == updated.id ? updated : node).toList(),
     );
+  }
+
+  String? _inferBackgroundSvgAsset(List<TextNode> items) {
+    final ids = items.map((item) => item.id).toSet();
+    final isRouteNumberBoard =
+        ids.contains('item_route_header') &&
+        ids.contains('item_route_code') &&
+        ids.contains('item_route_alias');
+    if (!isRouteNumberBoard) return null;
+    return 'assets/road_signs_prc/svg/China_Expressway_Sign_without_number.svg';
   }
 }

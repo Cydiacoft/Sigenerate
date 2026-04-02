@@ -6,6 +6,7 @@ class RoadBoardTemplateSpec {
     required this.name,
     required this.canvasSize,
     required this.slots,
+    this.backgroundSvgAsset,
     this.headerColor,
     this.headerRatio,
   });
@@ -14,6 +15,7 @@ class RoadBoardTemplateSpec {
   final String name;
   final Size canvasSize;
   final Map<String, RoadBoardSlotSpec> slots;
+  final String? backgroundSvgAsset;
   final Color? headerColor;
   final double? headerRatio;
 
@@ -35,6 +37,10 @@ class RoadBoardTemplateSpec {
         (canvas['height'] as num?)?.toDouble() ?? 0,
       ),
       slots: slots,
+      backgroundSvgAsset:
+          (json['backgroundSvgAsset'] as String?)?.trim().isEmpty == true
+          ? null
+          : json['backgroundSvgAsset'] as String?,
       headerColor: _parseHexColor(json['headerColor'] as String?),
       headerRatio: (json['headerRatio'] as num?)?.toDouble(),
     );
@@ -179,21 +185,21 @@ class RoadBoardTemplates {
   static const RoadBoardTemplateSpec routeNumber = RoadBoardTemplateSpec(
     id: routeNumberId,
     name: 'Route Number Board',
-    canvasSize: Size(360, 320),
-    headerColor: Color(0xFFD32F2F),
-    headerRatio: 0.28,
+    canvasSize: Size(470, 452),
+    backgroundSvgAsset:
+        'assets/road_signs_prc/svg/China_Expressway_Sign_without_number.svg',
     slots: {
       'topCenter': RoadBoardSlotSpec(
         id: 'topCenter',
-        rect: Rect.fromLTWH(20, 20, 320, 50),
+        rect: Rect.fromLTWH(40, 34, 390, 72),
       ),
       'center': RoadBoardSlotSpec(
         id: 'center',
-        rect: Rect.fromLTWH(20, 100, 320, 130),
+        rect: Rect.fromLTWH(38, 128, 394, 186),
       ),
       'bottomCenter': RoadBoardSlotSpec(
         id: 'bottomCenter',
-        rect: Rect.fromLTWH(20, 240, 320, 60),
+        rect: Rect.fromLTWH(48, 334, 374, 84),
       ),
     },
   );

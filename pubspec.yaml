@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/metro_guide/
     - assets/road_signs/
+    - assets/road_signs_prc/svg/
     - assets/road_signs_info/svg/
     - core_assets/palettes/colors.json
     - core_standards/road_gb_5768_2_2022/layout.json

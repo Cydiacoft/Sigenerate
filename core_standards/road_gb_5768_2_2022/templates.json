@@ -48,13 +48,12 @@
     {
       "id": "route_number",
       "name": "Route Number Board",
-      "canvasSize": { "width": 360, "height": 320 },
-      "headerColor": "#D32F2F",
-      "headerRatio": 0.28,
+      "canvasSize": { "width": 470, "height": 452 },
+      "backgroundSvgAsset": "assets/road_signs_prc/svg/China_Expressway_Sign_without_number.svg",
       "slots": [
-        { "id": "topCenter", "rect": { "x": 20, "y": 20, "width": 320, "height": 50 } },
-        { "id": "center", "rect": { "x": 20, "y": 100, "width": 320, "height": 130 } },
-        { "id": "bottomCenter", "rect": { "x": 20, "y": 240, "width": 320, "height": 60 } }
+        { "id": "topCenter", "rect": { "x": 40, "y": 34, "width": 390, "height": 72 } },
+        { "id": "center", "rect": { "x": 38, "y": 128, "width": 394, "height": 186 } },
+        { "id": "bottomCenter", "rect": { "x": 48, "y": 334, "width": 374, "height": 84 } }
       ]
     },
     {
